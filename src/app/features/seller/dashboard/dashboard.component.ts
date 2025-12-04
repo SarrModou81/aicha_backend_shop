@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SellerService } from '../../../core/services/seller.service';
 
 @Component({
   selector: 'app-seller-dashboard',
@@ -15,21 +16,45 @@ export class SellerDashboardComponent implements OnInit {
 
   recentOrders: any[] = [];
   loading = true;
+  error: string | null = null;
+
+  constructor(private sellerService: SellerService) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
   }
 
   loadDashboardData(): void {
-    // TODO: Charger les données depuis le backend
-    setTimeout(() => {
-      this.stats = {
-        totalProducts: 45,
-        totalOrders: 28,
-        pendingOrders: 5,
-        totalRevenue: 385000
-      };
-      this.loading = false;
-    }, 1000);
+    this.loading = true;
+    this.error = null;
+
+    this.sellerService.getDashboardStats().subscribe({
+      next: (data) => {
+        this.stats = {
+          totalProducts: data.total_products || 0,
+          totalOrders: data.total_orders || 0,
+          pendingOrders: data.pending_orders || 0,
+          totalRevenue: data.total_revenue || 0
+        };
+        this.loading = false;
+        this.loadRecentOrders();
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des statistiques:', error);
+        this.error = 'Impossible de charger les statistiques';
+        this.loading = false;
+      }
+    });
+  }
+
+  loadRecentOrders(): void {
+    this.sellerService.getRecentOrders().subscribe({
+      next: (orders) => {
+        this.recentOrders = orders.slice(0, 5);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des commandes récentes:', error);
+      }
+    });
   }
 }

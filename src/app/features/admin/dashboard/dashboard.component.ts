@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,21 +16,45 @@ export class AdminDashboardComponent implements OnInit {
 
   recentOrders: any[] = [];
   loading = true;
+  error: string | null = null;
+
+  constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
   }
 
   loadDashboardData(): void {
-    // TODO: Charger les données depuis le backend
-    setTimeout(() => {
-      this.stats = {
-        totalProducts: 150,
-        totalOrders: 89,
-        totalUsers: 245,
-        totalRevenue: 1245000
-      };
-      this.loading = false;
-    }, 1000);
+    this.loading = true;
+    this.error = null;
+
+    this.adminService.getDashboardStats().subscribe({
+      next: (data) => {
+        this.stats = {
+          totalProducts: data.total_products || 0,
+          totalOrders: data.total_orders || 0,
+          totalUsers: data.total_users || 0,
+          totalRevenue: data.total_revenue || 0
+        };
+        this.loading = false;
+        this.loadRecentOrders();
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des statistiques:', error);
+        this.error = 'Impossible de charger les statistiques';
+        this.loading = false;
+      }
+    });
+  }
+
+  loadRecentOrders(): void {
+    this.adminService.getRecentOrders().subscribe({
+      next: (orders) => {
+        this.recentOrders = orders.slice(0, 3);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des commandes récentes:', error);
+      }
+    });
   }
 }
