@@ -1,0 +1,199 @@
+<div class="product-list-container">
+  <!-- Filtres -->
+  <aside class="filters-sidebar">
+    <div class="filters-header">
+      <h3>Filtres</h3>
+      <button type="button" class="btn-reset" (click)="resetFilters()">
+        Réinitialiser
+      </button>
+    </div>
+
+    <div class="filter-section">
+      <label>Recherche</label>
+      <input
+        type="text"
+        [(ngModel)]="filters.search"
+        (keyup.enter)="applyFilters()"
+        placeholder="Rechercher un produit..."
+        class="form-control"
+      />
+    </div>
+
+    <div class="filter-section">
+      <label>Catégorie</label>
+      <select [(ngModel)]="filters.category_id" (change)="applyFilters()" class="form-control">
+        <option [ngValue]="null">Toutes les catégories</option>
+        <option *ngFor="let category of categories" [ngValue]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label>Prix</label>
+      <div class="price-range">
+        <input
+          type="number"
+          [(ngModel)]="filters.min_price"
+          placeholder="Min"
+          class="form-control"
+        />
+        <span>-</span>
+        <input
+          type="number"
+          [(ngModel)]="filters.max_price"
+          placeholder="Max"
+          class="form-control"
+        />
+      </div>
+      <button type="button" class="btn-apply" (click)="applyFilters()">
+        Appliquer
+      </button>
+    </div>
+
+    <div class="filter-section">
+      <label>Taille</label>
+      <select [(ngModel)]="filters.size" (change)="applyFilters()" class="form-control">
+        <option value="">Toutes les tailles</option>
+        <option *ngFor="let size of availableSizes" [value]="size">
+          {{ size }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label>Couleur</label>
+      <select [(ngModel)]="filters.color" (change)="applyFilters()" class="form-control">
+        <option value="">Toutes les couleurs</option>
+        <option *ngFor="let color of availableColors" [value]="color">
+          {{ color }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          [(ngModel)]="filters.on_sale"
+          (change)="applyFilters()"
+        />
+        En promotion uniquement
+      </label>
+    </div>
+  </aside>
+
+  <!-- Liste des produits -->
+  <main class="products-main">
+    <!-- En-tête -->
+    <div class="products-header">
+      <div class="products-count">
+        <span *ngIf="!loading">{{ total }} produit(s) trouvé(s)</span>
+      </div>
+      <div class="products-sort">
+        <label>Trier par:</label>
+        <select (change)="onSortChange($event)" class="form-control">
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement des produits...</p>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="error && !loading" class="error-message">
+      <p>{{ error }}</p>
+      <button type="button" class="btn btn-primary" (click)="loadProducts()">
+        Réessayer
+      </button>
+    </div>
+
+    <!-- Grille de produits -->
+    <div *ngIf="!loading && !error" class="products-grid">
+      <div *ngFor="let product of products" class="product-card">
+        <div class="product-image" (click)="viewProduct(product.id)">
+          <img
+            [src]="product.images && product.images[0] || 'assets/images/placeholder.jpg'"
+            [alt]="product.name"
+          />
+          <span *ngIf="product.discount_price" class="badge-sale">
+            -{{ ((product.price - product.discount_price) / product.price * 100).toFixed(0) }}%
+          </span>
+        </div>
+        <div class="product-info">
+          <h4 class="product-name" (click)="viewProduct(product.id)">
+            {{ product.name }}
+          </h4>
+          <p class="product-brand" *ngIf="product.brand">{{ product.brand }}</p>
+          <div class="product-rating" *ngIf="product.average_rating">
+            <span class="stars">
+              {{ '★'.repeat(Math.round(product.average_rating)) }}{{ '☆'.repeat(5 - Math.round(product.average_rating)) }}
+            </span>
+            <span class="rating-value">({{ product.average_rating?.toFixed(1) }})</span>
+          </div>
+          <div class="product-price">
+            <span *ngIf="product.discount_price" class="price-original">
+              {{ product.price }} FCFA
+            </span>
+            <span class="price-current">
+              {{ product.discount_price || product.price }} FCFA
+            </span>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary btn-add-cart"
+            (click)="addToCart(product)"
+            [disabled]="product.stock === 0"
+          >
+            {{ product.stock === 0 ? 'Rupture de stock' : 'Ajouter au panier' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message si aucun produit -->
+    <div *ngIf="!loading && !error && products.length === 0" class="no-products">
+      <p>Aucun produit trouvé avec ces critères.</p>
+      <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+        Réinitialiser les filtres
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading && !error && products.length > 0" class="pagination">
+      <button
+        type="button"
+        class="btn-page"
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        Précédent
+      </button>
+
+      <button
+        *ngFor="let page of paginationPages"
+        type="button"
+        class="btn-page"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button
+        type="button"
+        class="btn-page"
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Suivant
+      </button>
+    </div>
+  </main>
+</div>

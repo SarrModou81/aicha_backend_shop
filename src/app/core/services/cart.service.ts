@@ -27,7 +27,20 @@ export class CartService {
   /**
    * Ajouter au panier
    */
-  addToCart(data: AddToCartRequest): Observable<any> {
+  addToCart(productIdOrData: number | AddToCartRequest, quantity?: number, size?: string, color?: string): Observable<any> {
+    let data: AddToCartRequest;
+
+    if (typeof productIdOrData === 'number') {
+      data = {
+        product_id: productIdOrData,
+        quantity: quantity || 1,
+        size,
+        color
+      };
+    } else {
+      data = productIdOrData;
+    }
+
     return this.http.post(`${this.API_URL}/client/cart/add`, data).pipe(
       tap(() => this.getCart().subscribe())
     );
@@ -36,8 +49,12 @@ export class CartService {
   /**
    * Mettre à jour la quantité
    */
-  updateCartItem(itemId: number, quantity: number): Observable<any> {
-    return this.http.put(`${this.API_URL}/client/cart/items/${itemId}`, { quantity }).pipe(
+  updateCartItem(itemId: number, quantity: number, size?: string, color?: string): Observable<any> {
+    const data: any = { quantity };
+    if (size) data.size = size;
+    if (color) data.color = color;
+
+    return this.http.put(`${this.API_URL}/client/cart/items/${itemId}`, data).pipe(
       tap(() => this.getCart().subscribe())
     );
   }
