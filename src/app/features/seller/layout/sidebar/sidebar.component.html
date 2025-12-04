@@ -1,0 +1,28 @@
+<aside class="seller-sidebar" [class.collapsed]="isSidebarCollapsed">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">🏪</span>
+      <span class="logo-text" *ngIf="!isSidebarCollapsed">AICHA Vendeur</span>
+    </div>
+    <button class="toggle-btn" (click)="toggleSidebar()" type="button">
+      <span>{{ isSidebarCollapsed ? '→' : '←' }}</span>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="menu-list">
+      <li *ngFor="let item of menuItems"
+          class="menu-item"
+          [class.active]="isActive(item.route)">
+        <a (click)="navigateTo(item.route)" class="menu-link">
+          <span class="menu-icon">{{ item.icon }}</span>
+          <span class="menu-label" *ngIf="!isSidebarCollapsed">{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer" *ngIf="!isSidebarCollapsed">
+    <p class="version">Version 1.0.0</p>
+  </div>
+</aside>

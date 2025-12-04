@@ -1,17 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AdminRoutingModule } from './admin-routing.module';
-import { LayoutModule } from '../../layout/layout.module';
-// TODO: Importer les composants admin
+import { AdminDashboardComponent } from './dashboard/dashboard.component';
+import { AdminSidebarComponent } from './layout/sidebar/sidebar.component';
+import { AdminNavbarComponent } from './layout/navbar/navbar.component';
 
 @NgModule({
   declarations: [
-    // TODO: Déclarer les composants
+    AdminDashboardComponent,
+    AdminSidebarComponent,
+    AdminNavbarComponent
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule,
-    LayoutModule
+    FormsModule,
+    AdminRoutingModule
   ]
 })
 export class AdminModule { }

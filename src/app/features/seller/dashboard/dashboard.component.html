@@ -1,0 +1,116 @@
+<div class="seller-layout">
+  <app-seller-sidebar></app-seller-sidebar>
+
+  <div class="seller-main">
+    <app-seller-navbar></app-seller-navbar>
+
+    <div class="seller-content">
+      <div class="dashboard-container">
+        <h1>Bienvenue dans votre espace vendeur</h1>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card products">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalProducts }}</h3>
+              <p>Mes Produits</p>
+            </div>
+          </div>
+
+          <div class="stat-card orders">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalOrders }}</h3>
+              <p>Commandes totales</p>
+            </div>
+          </div>
+
+          <div class="stat-card pending">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <h3>{{ stats.pendingOrders }}</h3>
+              <p>En attente</p>
+            </div>
+          </div>
+
+          <div class="stat-card revenue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <h3>{{ stats.totalRevenue | number }} FCFA</h3>
+              <p>Revenu total</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <h2>Actions rapides</h2>
+          <div class="actions-grid">
+            <button class="action-btn add" type="button">
+              <span class="btn-icon">➕</span>
+              <span>Ajouter un produit</span>
+            </button>
+            <button class="action-btn orders" type="button">
+              <span class="btn-icon">📋</span>
+              <span>Voir mes commandes</span>
+            </button>
+            <button class="action-btn stats" type="button">
+              <span class="btn-icon">📊</span>
+              <span>Statistiques</span>
+            </button>
+            <button class="action-btn settings" type="button">
+              <span class="btn-icon">⚙️</span>
+              <span>Paramètres</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-orders">
+          <h2>Commandes récentes</h2>
+          <div class="orders-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Client</th>
+                  <th>Produit</th>
+                  <th>Montant</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1234</td>
+                  <td>Amadou Diop</td>
+                  <td>Smartphone XYZ</td>
+                  <td>45 000 FCFA</td>
+                  <td><span class="status pending">En attente</span></td>
+                  <td>Il y a 2h</td>
+                </tr>
+                <tr>
+                  <td>1233</td>
+                  <td>Fatou Sall</td>
+                  <td>Laptop Pro</td>
+                  <td>125 000 FCFA</td>
+                  <td><span class="status confirmed">Confirmée</span></td>
+                  <td>Il y a 5h</td>
+                </tr>
+                <tr>
+                  <td>1232</td>
+                  <td>Moussa Ba</td>
+                  <td>Casque Audio</td>
+                  <td>15 000 FCFA</td>
+                  <td><span class="status shipped">Expédiée</span></td>
+                  <td>Hier</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

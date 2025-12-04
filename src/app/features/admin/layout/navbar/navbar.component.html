@@ -1,0 +1,42 @@
+<nav class="admin-navbar">
+  <div class="navbar-container">
+    <div class="navbar-left">
+      <h2 class="page-title">Tableau de bord</h2>
+    </div>
+
+    <div class="navbar-right">
+      <!-- Notifications -->
+      <div class="navbar-item notifications">
+        <button type="button" class="icon-btn">
+          <span class="icon">🔔</span>
+          <span class="badge" *ngIf="unreadNotifications > 0">{{ unreadNotifications }}</span>
+        </button>
+      </div>
+
+      <!-- User Menu -->
+      <div class="navbar-item user-menu" [class.active]="isUserMenuOpen">
+        <button type="button" class="user-btn" (click)="toggleUserMenu()">
+          <div class="user-avatar">
+            <span>{{ currentUser?.name?.charAt(0) || 'A' }}</span>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ currentUser?.name || 'Admin' }}</span>
+            <span class="user-role">Administrateur</span>
+          </div>
+          <span class="dropdown-icon">▼</span>
+        </button>
+
+        <div class="dropdown-menu" [class.show]="isUserMenuOpen">
+          <a class="dropdown-item" (click)="viewProfile()">
+            <span class="item-icon">👤</span>
+            Mon profil
+          </a>
+          <a class="dropdown-item" (click)="logout()">
+            <span class="item-icon">🚪</span>
+            Déconnexion
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,17 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SellerRoutingModule } from './seller-routing.module';
-import { LayoutModule } from '../../layout/layout.module';
-// TODO: Importer les composants seller
+import { SellerDashboardComponent } from './dashboard/dashboard.component';
+import { SellerSidebarComponent } from './layout/sidebar/sidebar.component';
+import { SellerNavbarComponent } from './layout/navbar/navbar.component';
 
 @NgModule({
   declarations: [
-    // TODO: Déclarer les composants
+    SellerDashboardComponent,
+    SellerSidebarComponent,
+    SellerNavbarComponent
   ],
   imports: [
     CommonModule,
-    SellerRoutingModule,
-    LayoutModule
+    FormsModule,
+    SellerRoutingModule
   ]
 })
 export class SellerModule { }
