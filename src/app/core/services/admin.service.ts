@@ -29,8 +29,11 @@ export class AdminService {
    * Obtenir les statistiques de ventes par mois
    */
   getSalesByMonth(year?: number): Observable<any> {
-    const params = year ? { year: year.toString() } : {};
-    return this.http.get(`${this.API_URL}/dashboard/sales-by-month`, { params });
+    const url = `${this.API_URL}/dashboard/sales-by-month`;
+    if (year) {
+      return this.http.get(url, { params: { year: year.toString() } });
+    }
+    return this.http.get(url);
   }
 
   /**
