@@ -18,9 +18,19 @@ export class CartService {
   /**
    * Obtenir le panier
    */
-  getCart(): Observable<Cart> {
-    return this.http.get<Cart>(`${this.API_URL}/client/cart`).pipe(
-      tap(cart => this.cartSubject.next(cart))
+  getCart(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/client/cart`).pipe(
+      tap(response => {
+        // Le backend retourne { cart: Cart, total_items: number, total_price: number }
+        if (response.cart) {
+          // Ajouter les totaux au panier
+          response.cart.total_items = response.total_items;
+          response.cart.total_price = response.total_price;
+          this.cartSubject.next(response.cart);
+        } else {
+          this.cartSubject.next(response);
+        }
+      })
     );
   }
 

@@ -29,7 +29,8 @@ export class CartComponent implements OnInit {
 
     this.cartService.getCart().subscribe({
       next: (response) => {
-        this.cart = response;
+        // Le service met déjà à jour le cartSubject, mais on peut aussi mettre à jour directement
+        this.cart = response.cart || response;
         this.loading = false;
       },
       error: (error) => {

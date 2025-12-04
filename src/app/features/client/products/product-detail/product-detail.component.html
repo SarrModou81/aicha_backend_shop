@@ -47,7 +47,7 @@
           <span class="stars">
             {{ '★'.repeat(Math.round(product.average_rating)) }}{{ '☆'.repeat(5 - Math.round(product.average_rating)) }}
           </span>
-          <span class="rating-value">({{ product.average_rating?.toFixed(1) }})</span>
+          <span class="rating-value">({{ product.average_rating.toFixed(1) }})</span>
           <span class="reviews-count">{{ product.reviews_count }} avis</span>
         </div>
       </div>
