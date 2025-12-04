@@ -12,11 +12,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call([
+            UserSeeder::class,
+            CategorySeeder::class,
+            DeliveryZoneSeeder::class,
+            ProductSeeder::class,
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->command->info('🎉 Database seeded successfully!');
+        $this->command->info('');
+        $this->command->info('📧 Admin credentials:');
+        $this->command->info('   Email: admin@aichashop.sn');
+        $this->command->info('   Password: password123');
+        $this->command->info('');
+        $this->command->info('📧 Seller credentials:');
+        $this->command->info('   Email: fatou@aichashop.sn');
+        $this->command->info('   Password: password123');
+        $this->command->info('');
+        $this->command->info('📧 Client credentials:');
+        $this->command->info('   Email: client1@example.com');
+        $this->command->info('   Password: password123');
     }
 }
