@@ -1,0 +1,100 @@
+<div class="promotions-container">
+  <h1>🔥 Promotions</h1>
+  <p class="subtitle">Découvrez nos meilleures offres du moment !</p>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des promotions...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>{{ error }}</p>
+    <button type="button" class="btn btn-primary" (click)="loadProducts()">
+      Réessayer
+    </button>
+  </div>
+
+  <!-- Grille de produits -->
+  <div *ngIf="!loading && !error" class="products-grid">
+    <div *ngFor="let product of products" class="product-card">
+      <div class="product-image" (click)="viewProduct(product.id)">
+        <img
+          [src]="product.images && product.images[0] || 'assets/images/placeholder.jpg'"
+          [alt]="product.name"
+        />
+        <span class="badge-sale">
+          -{{ ((product.price - product.discount_price) / product.price * 100).toFixed(0) }}%
+        </span>
+      </div>
+      <div class="product-info">
+        <h4 class="product-name" (click)="viewProduct(product.id)">
+          {{ product.name }}
+        </h4>
+        <p class="product-brand" *ngIf="product.brand">{{ product.brand }}</p>
+        <div class="product-rating" *ngIf="product.average_rating">
+          <span class="stars">
+            {{ '★'.repeat(Math.round(product.average_rating)) }}{{ '☆'.repeat(5 - Math.round(product.average_rating)) }}
+          </span>
+          <span class="rating-value">({{ product.average_rating.toFixed(1) }})</span>
+        </div>
+        <div class="product-price">
+          <span class="price-original">
+            {{ product.price }} FCFA
+          </span>
+          <span class="price-current">
+            {{ product.discount_price }} FCFA
+          </span>
+        </div>
+        <button
+          type="button"
+          class="btn btn-primary btn-add-cart"
+          (click)="addToCart(product)"
+          [disabled]="product.stock === 0"
+        >
+          {{ product.stock === 0 ? 'Rupture de stock' : 'Ajouter au panier' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message si aucun produit -->
+  <div *ngIf="!loading && !error && products.length === 0" class="no-products">
+    <p>Aucune promotion disponible pour le moment.</p>
+    <button type="button" class="btn btn-secondary" routerLink="/products">
+      Voir tous les produits
+    </button>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && !error && products.length > 0" class="pagination">
+    <button
+      type="button"
+      class="btn-page"
+      (click)="goToPage(currentPage - 1)"
+      [disabled]="currentPage === 1"
+    >
+      Précédent
+    </button>
+
+    <button
+      *ngFor="let page of paginationPages"
+      type="button"
+      class="btn-page"
+      [class.active]="page === currentPage"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </button>
+
+    <button
+      type="button"
+      class="btn-page"
+      (click)="goToPage(currentPage + 1)"
+      [disabled]="currentPage === totalPages"
+    >
+      Suivant
+    </button>
+  </div>
+</div>

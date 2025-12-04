@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClientRoutingModule } from './client-routing.module';
-import { LayoutModule } from '../../layout/layout.module';
 import { HomeComponent } from './home/home.component';
 import { ProductListComponent } from './products/product-list/product-list.component';
 import { ProductDetailComponent } from './products/product-detail/product-detail.component';
 import { CartComponent } from './cart/cart.component';
 import { OrdersComponent } from './orders/orders.component';
+import { PromotionsComponent } from './products/promotions/promotions.component';
+import { NewArrivalsComponent } from './products/new-arrivals/new-arrivals.component';
 
 @NgModule({
   declarations: [
@@ -15,13 +16,14 @@ import { OrdersComponent } from './orders/orders.component';
     ProductListComponent,
     ProductDetailComponent,
     CartComponent,
-    OrdersComponent
+    OrdersComponent,
+    PromotionsComponent,
+    NewArrivalsComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
-    ClientRoutingModule,
-    LayoutModule
+    ClientRoutingModule
   ]
 })
 export class ClientModule { }

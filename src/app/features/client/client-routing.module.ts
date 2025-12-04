@@ -5,6 +5,8 @@ import { ProductListComponent } from './products/product-list/product-list.compo
 import { ProductDetailComponent } from './products/product-detail/product-detail.component';
 import { CartComponent } from './cart/cart.component';
 import { OrdersComponent } from './orders/orders.component';
+import { PromotionsComponent } from './products/promotions/promotions.component';
+import { NewArrivalsComponent } from './products/new-arrivals/new-arrivals.component';
 
 const routes: Routes = [
   {
@@ -14,6 +16,14 @@ const routes: Routes = [
   {
     path: 'products',
     component: ProductListComponent
+  },
+  {
+    path: 'products/on-sale',
+    component: PromotionsComponent
+  },
+  {
+    path: 'products/new-arrivals',
+    component: NewArrivalsComponent
   },
   {
     path: 'products/:id',

@@ -1,0 +1,21 @@
+@import '../product-list/product-list.component.scss';
+
+.promotions-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+}
