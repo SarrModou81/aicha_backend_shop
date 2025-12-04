@@ -23,6 +23,10 @@ class CartItem extends Model
         'price' => 'decimal:2',
     ];
 
+    protected $appends = [
+        'subtotal',
+    ];
+
     // Relations
 
     public function cart()

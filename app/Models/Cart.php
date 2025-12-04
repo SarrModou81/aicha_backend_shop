@@ -13,6 +13,11 @@ class Cart extends Model
         'user_id',
     ];
 
+    protected $appends = [
+        'total_items',
+        'subtotal',
+    ];
+
     // Relations
 
     public function user()
