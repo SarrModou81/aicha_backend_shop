@@ -94,8 +94,9 @@ Route::prefix('v1')->group(function () {
 
         // Dashboard
         Route::get('/dashboard/stats', [SellerDashboardController::class, 'stats']);
+        Route::get('/dashboard/recent-orders', [SellerDashboardController::class, 'recentOrders']);
+        Route::get('/dashboard/sales-by-month', [SellerDashboardController::class, 'salesByMonth']);
         Route::get('/dashboard/top-products', [SellerDashboardController::class, 'topProducts']);
-        Route::get('/dashboard/sales-stats', [SellerDashboardController::class, 'salesStats']);
 
         // Gestion des produits
         Route::prefix('products')->group(function () {
@@ -132,10 +133,10 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
-        Route::get('/dashboard/sales-stats', [AdminDashboardController::class, 'salesStats']);
-        Route::get('/dashboard/security-logs', [AdminDashboardController::class, 'securityLogs']);
-        Route::get('/dashboard/top-sellers', [AdminDashboardController::class, 'topSellers']);
+        Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats']);
+        Route::get('/dashboard/recent-orders', [AdminDashboardController::class, 'recentOrders']);
+        Route::get('/dashboard/sales-by-month', [AdminDashboardController::class, 'salesByMonth']);
+        Route::get('/dashboard/top-products', [AdminDashboardController::class, 'topProducts']);
 
         // Gestion des utilisateurs
         Route::prefix('users')->group(function () {
