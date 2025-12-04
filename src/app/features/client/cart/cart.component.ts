@@ -29,7 +29,7 @@ export class CartComponent implements OnInit {
 
     this.cartService.getCart().subscribe({
       next: (response) => {
-        this.cart = response.cart;
+        this.cart = response;
         this.loading = false;
       },
       error: (error) => {

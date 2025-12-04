@@ -6,6 +6,7 @@ export interface Cart {
   items: CartItem[];
   total_items: number;
   subtotal: number;
+  total_price: number;
 }
 
 export interface CartItem {

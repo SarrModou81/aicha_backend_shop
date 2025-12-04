@@ -20,10 +20,13 @@ export class ProductDetailComponent implements OnInit {
   selectedColor: string | null = null;
   quantity = 1;
 
+  // Exposer Math pour utilisation dans le template
+  Math = Math;
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private router: Router
   ) {}
 

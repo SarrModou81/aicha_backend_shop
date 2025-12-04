@@ -49,6 +49,9 @@ export class ProductListComponent implements OnInit {
   availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   availableColors = ['Noir', 'Blanc', 'Bleu', 'Rouge', 'Vert', 'Jaune', 'Rose', 'Gris'];
 
+  // Exposer Math pour utilisation dans le template
+  Math = Math;
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
