@@ -1,0 +1,65 @@
+<nav class="navbar">
+  <div class="container navbar-container">
+    <!-- Logo -->
+    <div class="navbar-brand" routerLink="/">
+      <img src="assets/images/logo.png" alt="AICHA SHOP" class="logo" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiNFOTFFNjMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPkFJQ0hBIFNIT1A8L3RleHQ+PC9zdmc+';">
+    </div>
+
+    <!-- Menu hamburger mobile -->
+    <button class="menu-toggle" (click)="toggleMenu()" [class.active]="isMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Navigation -->
+    <div class="navbar-menu" [class.active]="isMenuOpen">
+      <ul class="navbar-nav">
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Accueil</a></li>
+        <li><a routerLink="/products" routerLinkActive="active">Produits</a></li>
+        <li><a routerLink="/products/on-sale" routerLinkActive="active">Promotions</a></li>
+        <li><a routerLink="/products/new-arrivals" routerLinkActive="active">Nouveautés</a></li>
+      </ul>
+
+      <div class="navbar-actions">
+        <!-- Panier (pour les clients uniquement) -->
+        <a *ngIf="currentUser?.role === 'client'" routerLink="/cart" class="cart-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <span *ngIf="cartItemsCount > 0" class="cart-badge">{{ cartItemsCount }}</span>
+        </a>
+
+        <!-- Utilisateur connecté -->
+        <div *ngIf="currentUser" class="user-menu">
+          <button class="user-button" (click)="toggleMenu()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>{{ currentUser.name }}</span>
+          </button>
+
+          <div class="dropdown-menu">
+            <a (click)="navigateToDashboard()">
+              <span *ngIf="currentUser.role === 'admin'">Admin Dashboard</span>
+              <span *ngIf="currentUser.role === 'vendeur'">Espace Vendeur</span>
+              <span *ngIf="currentUser.role === 'client'">Mon Compte</span>
+            </a>
+            <a *ngIf="currentUser.role === 'client'" routerLink="/orders">Mes Commandes</a>
+            <a routerLink="/profile">Mon Profil</a>
+            <a (click)="logout()" class="logout">Déconnexion</a>
+          </div>
+        </div>
+
+        <!-- Invité -->
+        <div *ngIf="!currentUser" class="auth-buttons">
+          <a routerLink="/auth/login" class="btn btn-secondary">Connexion</a>
+          <a routerLink="/auth/register" class="btn btn-primary">Inscription</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

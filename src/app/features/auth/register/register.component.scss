@@ -1,0 +1,13 @@
+@import '../login/login.component.scss';
+
+small {
+  color: var(--gray-color);
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
