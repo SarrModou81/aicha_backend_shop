@@ -24,7 +24,7 @@
           [src]="product.images && product.images[0] || 'assets/images/placeholder.jpg'"
           [alt]="product.name"
         />
-        <span class="badge-sale">
+        <span class="badge-sale" *ngIf="product.discount_price">
           -{{ ((product.price - product.discount_price) / product.price * 100).toFixed(0) }}%
         </span>
       </div>
