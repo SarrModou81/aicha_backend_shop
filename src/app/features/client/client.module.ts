@@ -7,13 +7,15 @@ import { HomeComponent } from './home/home.component';
 import { ProductListComponent } from './products/product-list/product-list.component';
 import { ProductDetailComponent } from './products/product-detail/product-detail.component';
 import { CartComponent } from './cart/cart.component';
+import { OrdersComponent } from './orders/orders.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
     ProductListComponent,
     ProductDetailComponent,
-    CartComponent
+    CartComponent,
+    OrdersComponent
   ],
   imports: [
     CommonModule,

@@ -8,8 +8,11 @@ export interface Order {
   address_id: number;
   subtotal: number;
   shipping_cost: number;
+  delivery_fee: number; // Alias pour shipping_cost
   total: number;
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  payment_method?: 'cash' | 'card' | 'wave' | 'orange_money' | 'free_money';
+  payment_status?: 'pending' | 'paid' | 'failed' | 'refunded';
   tracking_number?: string;
   notes?: string;
   cancellation_reason?: string;
@@ -17,6 +20,7 @@ export interface Order {
   updated_at: string;
   items?: OrderItem[];
   address?: Address;
+  delivery_address?: Address; // Alias pour address
   payment?: Payment;
   user?: User;
 }
@@ -42,6 +46,7 @@ export interface Address {
   full_name: string;
   phone: string;
   address_line1: string;
+  street: string; // Alias pour address_line1
   address_line2?: string;
   city: string;
   region?: string;

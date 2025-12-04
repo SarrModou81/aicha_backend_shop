@@ -50,10 +50,18 @@ export class AuthService {
    */
   logout(): Observable<any> {
     return this.http.post(`${this.API_URL}/auth/logout`, {}).pipe(
-      tap(() => {
-        this.clearAuthData();
-        this.currentUserSubject.next(null);
-        this.router.navigate(['/auth/login']);
+      tap({
+        next: () => {
+          this.clearAuthData();
+          this.currentUserSubject.next(null);
+          this.router.navigate(['/auth/login']);
+        },
+        error: () => {
+          // Même en cas d'erreur API, on déconnecte localement
+          this.clearAuthData();
+          this.currentUserSubject.next(null);
+          this.router.navigate(['/auth/login']);
+        }
       })
     );
   }

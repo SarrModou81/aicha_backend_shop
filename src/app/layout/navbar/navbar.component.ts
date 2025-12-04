@@ -13,6 +13,7 @@ export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   cartItemsCount = 0;
   isMenuOpen = false;
+  isUserMenuOpen = false;
 
   constructor(
     public authService: AuthService,
@@ -39,10 +40,25 @@ export class NavbarComponent implements OnInit {
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
+    this.isUserMenuOpen = false; // Fermer le menu utilisateur si ouvert
+  }
+
+  toggleUserMenu(): void {
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
+  closeMenus(): void {
+    this.isUserMenuOpen = false;
   }
 
   logout(): void {
-    this.authService.logout().subscribe();
+    this.authService.logout().subscribe({
+      error: (error) => {
+        console.error('Erreur lors de la déconnexion:', error);
+        // L'erreur est déjà gérée dans le service, pas besoin d'action supplémentaire
+      }
+    });
+    this.closeMenus();
   }
 
   navigateToDashboard(): void {

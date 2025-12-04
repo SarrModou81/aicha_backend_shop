@@ -33,8 +33,8 @@
         </a>
 
         <!-- Utilisateur connecté -->
-        <div *ngIf="currentUser" class="user-menu">
-          <button class="user-button" (click)="toggleMenu()">
+        <div *ngIf="currentUser" class="user-menu" [class.active]="isUserMenuOpen">
+          <button class="user-button" (click)="toggleUserMenu()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
@@ -42,14 +42,14 @@
             <span>{{ currentUser.name }}</span>
           </button>
 
-          <div class="dropdown-menu">
-            <a (click)="navigateToDashboard()">
+          <div class="dropdown-menu" [class.show]="isUserMenuOpen">
+            <a (click)="navigateToDashboard(); closeMenus()">
               <span *ngIf="currentUser.role === 'admin'">Admin Dashboard</span>
               <span *ngIf="currentUser.role === 'vendeur'">Espace Vendeur</span>
               <span *ngIf="currentUser.role === 'client'">Mon Compte</span>
             </a>
-            <a *ngIf="currentUser.role === 'client'" routerLink="/orders">Mes Commandes</a>
-            <a routerLink="/profile">Mon Profil</a>
+            <a *ngIf="currentUser.role === 'client'" routerLink="/orders" (click)="closeMenus()">Mes Commandes</a>
+            <a routerLink="/profile" (click)="closeMenus()">Mon Profil</a>
             <a (click)="logout()" class="logout">Déconnexion</a>
           </div>
         </div>
