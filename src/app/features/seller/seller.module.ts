@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SellerRoutingModule } from './seller-routing.module';
+import { SellerLayoutComponent } from './layout/layout.component';
 import { SellerDashboardComponent } from './dashboard/dashboard.component';
 import { SellerSidebarComponent } from './layout/sidebar/sidebar.component';
 import { SellerNavbarComponent } from './layout/navbar/navbar.component';
@@ -15,6 +16,7 @@ import { SellerStatisticsComponent } from './statistics/statistics.component';
 
 @NgModule({
   declarations: [
+    SellerLayoutComponent,
     SellerDashboardComponent,
     SellerSidebarComponent,
     SellerNavbarComponent,
