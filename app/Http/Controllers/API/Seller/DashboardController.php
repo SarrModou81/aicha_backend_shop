@@ -18,13 +18,14 @@ class DashboardController extends Controller
         $sellerId = $request->user()->id;
 
         // Récupérer les produits du vendeur
-        $sellerProducts = Product::where('seller_id', $sellerId)->pluck('id');
+        $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
 
         // Calculer les statistiques
         $stats = [
-            'total_products' => Product::where('seller_id', $sellerId)->count(),
-            'active_products' => Product::where('seller_id', $sellerId)
-                ->where('is_active', true)
+            'total_products' => Product::where('user_id', $sellerId)->count(),
+            'active_products' => Product::where('user_id', $sellerId)
+                ->where('is_visible', true)
+                ->where('is_approved', true)
                 ->count(),
             'total_orders' => Order::whereHas('items', function ($query) use ($sellerProducts) {
                 $query->whereIn('product_id', $sellerProducts);
@@ -51,7 +52,7 @@ class DashboardController extends Controller
     public function recentOrders(Request $request)
     {
         $sellerId = $request->user()->id;
-        $sellerProducts = Product::where('seller_id', $sellerId)->pluck('id');
+        $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
 
         $orders = Order::with(['user', 'items' => function ($query) use ($sellerProducts) {
             $query->whereIn('product_id', $sellerProducts)->with('product');
@@ -73,7 +74,7 @@ class DashboardController extends Controller
     {
         $sellerId = $request->user()->id;
         $year = $request->input('year', date('Y'));
-        $sellerProducts = Product::where('seller_id', $sellerId)->pluck('id');
+        $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
 
         $sales = DB::table('order_items')
             ->whereIn('product_id', $sellerProducts)
@@ -100,7 +101,7 @@ class DashboardController extends Controller
         $sellerId = $request->user()->id;
         $limit = $request->input('limit', 10);
 
-        $products = Product::where('seller_id', $sellerId)
+        $products = Product::where('user_id', $sellerId)
             ->withCount(['orderItems as total_sold' => function ($query) {
                 $query->select(DB::raw('SUM(quantity)'));
             }])
