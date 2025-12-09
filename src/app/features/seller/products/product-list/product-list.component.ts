@@ -78,7 +78,8 @@ export class SellerProductListComponent implements OnInit {
   }
 
   viewProduct(id: number): void {
-    this.router.navigate(['/products', id]);
+    // Naviguer vers la page de modification pour rester dans le layout vendeur
+    this.router.navigate(['/seller/products/edit', id]);
   }
 
   toggleVisibility(product: any): void {

@@ -26,8 +26,28 @@ th { font-weight: 600; color: #2c3e50; }
 .status-badge.active { background: #d4edda; color: #155724; }
 .status-badge:not(.active) { background: #f8d7da; color: #721c24; }
 .actions { display: flex; gap: 0.5rem; }
-.actions button { background: none; border: none; font-size: 1.25rem; cursor: pointer; padding: 0.25rem; }
-.actions button:hover { transform: scale(1.2); }
+.actions .btn-action {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+}
+.actions .btn-view { color: #3498db; }
+.actions .btn-view:hover { background: #e8f4fd; transform: scale(1.1); }
+.actions .btn-edit { color: #16a085; }
+.actions .btn-edit:hover { background: #d5f4e6; transform: scale(1.1); }
+.actions .btn-toggle { color: #f39c12; }
+.actions .btn-toggle:hover { background: #fdebd0; transform: scale(1.1); }
+.actions .btn-delete { color: #e74c3c; }
+.actions .btn-delete:hover { background: #fadbd8; transform: scale(1.1); }
 .no-products { text-align: center; padding: 3rem; }
 .pagination { display: flex; justify-content: center; gap: 0.5rem; margin: 2rem 0; }
 .pagination button { padding: 0.5rem 1rem; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; }
