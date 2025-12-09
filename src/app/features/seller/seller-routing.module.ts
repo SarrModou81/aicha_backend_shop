@@ -7,6 +7,7 @@ import { SellerOrdersListComponent } from './orders/orders-list/orders-list.comp
 import { SellerStockComponent } from './stock/stock.component';
 import { SellerProfileComponent } from './profile/profile.component';
 import { SellerSettingsComponent } from './settings/settings.component';
+import { SellerStatisticsComponent } from './statistics/statistics.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,10 @@ const routes: Routes = [
   {
     path: 'orders',
     component: SellerOrdersListComponent
+  },
+  {
+    path: 'statistics',
+    component: SellerStatisticsComponent
   },
   {
     path: 'stock',

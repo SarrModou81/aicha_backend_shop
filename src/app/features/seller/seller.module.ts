@@ -11,6 +11,7 @@ import { SellerOrdersListComponent } from './orders/orders-list/orders-list.comp
 import { SellerStockComponent } from './stock/stock.component';
 import { SellerProfileComponent } from './profile/profile.component';
 import { SellerSettingsComponent } from './settings/settings.component';
+import { SellerStatisticsComponent } from './statistics/statistics.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { SellerSettingsComponent } from './settings/settings.component';
     SellerOrdersListComponent,
     SellerStockComponent,
     SellerProfileComponent,
-    SellerSettingsComponent
+    SellerSettingsComponent,
+    SellerStatisticsComponent
   ],
   imports: [
     CommonModule,

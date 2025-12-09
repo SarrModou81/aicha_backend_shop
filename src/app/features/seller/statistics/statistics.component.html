@@ -1,0 +1,231 @@
+<div class="seller-layout">
+  <app-seller-sidebar></app-seller-sidebar>
+
+  <div class="seller-main">
+    <app-seller-navbar></app-seller-navbar>
+
+    <div class="seller-content">
+      <div class="statistics-container">
+        <div class="page-header">
+          <h1>📊 Statistiques Détaillées</h1>
+          <div class="period-selector">
+            <button type="button" [class.active]="selectedPeriod === 'month'" (click)="changePeriod('month')">Mois</button>
+            <button type="button" [class.active]="selectedPeriod === 'year'" (click)="changePeriod('year')">Année</button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading">
+          <div class="spinner"></div>
+          <p>Chargement des statistiques...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !loading" class="error-message">
+          <p>{{ error }}</p>
+          <button type="button" (click)="loadStatistics()" class="btn-retry">Réessayer</button>
+        </div>
+
+        <!-- Statistics Content -->
+        <div *ngIf="!loading && !error">
+          <!-- Key Metrics -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon">📦</div>
+              <div class="metric-content">
+                <h3>{{ stats.totalProducts }}</h3>
+                <p>Total Produits</p>
+                <span class="metric-detail">{{ stats.activeProducts }} actifs ({{ getProductPerformanceRate() | number:'1.0-0' }}%)</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">🛒</div>
+              <div class="metric-content">
+                <h3>{{ stats.totalOrders }}</h3>
+                <p>Commandes</p>
+                <span class="metric-detail">{{ stats.confirmedOrders }} confirmées</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">💰</div>
+              <div class="metric-content">
+                <h3>{{ stats.totalRevenue | number:'1.0-0' }} FCFA</h3>
+                <p>Revenu Total</p>
+                <span class="metric-detail">Commandes livrées</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">📈</div>
+              <div class="metric-content">
+                <h3>{{ getAverageOrderValue() | number:'1.0-0' }} FCFA</h3>
+                <p>Panier Moyen</p>
+                <span class="metric-detail">Par commande</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sales Charts -->
+          <div class="charts-section">
+            <div class="chart-card revenue-chart">
+              <div class="chart-header">
+                <h2>📈 Évolution du Chiffre d'Affaires</h2>
+                <div class="chart-legend">
+                  <span class="legend-item revenue"><span class="color-box"></span> Revenu (FCFA)</span>
+                </div>
+              </div>
+              <div class="chart-container" *ngIf="salesChartData">
+                <div class="dual-chart">
+                  <div class="chart-bars">
+                    <div *ngFor="let label of salesChartData.labels; let i = index" class="bar-group">
+                      <div class="bar-wrapper">
+                        <div class="bar revenue-bar"
+                             [style.height.%]="(salesChartData.revenue[i] / getMaxRevenue()) * 100"
+                             [title]="salesChartData.revenue[i] | number:'1.0-0'">
+                          <span class="bar-value" *ngIf="salesChartData.revenue[i] > 0">
+                            {{ salesChartData.revenue[i] | number:'1.0-0' }}
+                          </span>
+                        </div>
+                        <span class="bar-label">{{ label }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-summary">
+                <div class="summary-item">
+                  <strong>Total:</strong> {{ stats.totalRevenue | number:'1.0-0' }} FCFA
+                </div>
+                <div class="summary-item">
+                  <strong>Moyenne/mois:</strong> {{ (stats.totalRevenue / 12) | number:'1.0-0' }} FCFA
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-card orders-chart">
+              <div class="chart-header">
+                <h2>📦 Nombre de Commandes par Mois</h2>
+                <div class="chart-legend">
+                  <span class="legend-item orders"><span class="color-box"></span> Commandes</span>
+                </div>
+              </div>
+              <div class="chart-container" *ngIf="salesChartData">
+                <div class="dual-chart">
+                  <div class="chart-bars">
+                    <div *ngFor="let label of salesChartData.labels; let i = index" class="bar-group">
+                      <div class="bar-wrapper">
+                        <div class="bar orders-bar"
+                             [style.height.%]="(salesChartData.orders[i] / getMaxOrders()) * 100"
+                             [title]="salesChartData.orders[i]">
+                          <span class="bar-value" *ngIf="salesChartData.orders[i] > 0">
+                            {{ salesChartData.orders[i] }}
+                          </span>
+                        </div>
+                        <span class="bar-label">{{ label }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-summary">
+                <div class="summary-item">
+                  <strong>Total:</strong> {{ stats.totalOrders }} commandes
+                </div>
+                <div class="summary-item">
+                  <strong>Moyenne/mois:</strong> {{ (stats.totalOrders / 12) | number:'1.1-1' }} commandes
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Products Performance -->
+          <div class="top-products-section">
+            <div class="section-header">
+              <h2>🏆 Top 10 Produits les Plus Vendus</h2>
+            </div>
+            <div class="products-performance">
+              <div class="performance-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rang</th>
+                      <th>Produit</th>
+                      <th>Ventes</th>
+                      <th>Prix Unitaire</th>
+                      <th>Revenu Estimé</th>
+                      <th>Performance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let product of topProducts; let i = index">
+                      <td class="rank">
+                        <span class="rank-badge" [class.top3]="i < 3">#{{ i + 1 }}</span>
+                      </td>
+                      <td class="product-info">
+                        <img [src]="product.images?.[0] || 'assets/placeholder.jpg'" alt="{{ product.name }}" class="product-thumb"/>
+                        <span class="product-name">{{ product.name }}</span>
+                      </td>
+                      <td class="sales-count">
+                        <strong>{{ product.total_sold || 0 }}</strong> unités
+                      </td>
+                      <td class="price">
+                        {{ product.price | number:'1.0-0' }} FCFA
+                      </td>
+                      <td class="revenue">
+                        <strong>{{ (product.total_sold || 0) * (product.price || 0) | number:'1.0-0' }} FCFA</strong>
+                      </td>
+                      <td class="performance-bar-cell">
+                        <div class="performance-bar-container">
+                          <div class="performance-bar"
+                               [style.width.%]="((product.total_sold || 0) / getMaxProductSales()) * 100">
+                          </div>
+                          <span class="performance-percent">
+                            {{ ((product.total_sold || 0) / getMaxProductSales()) * 100 | number:'1.0-0' }}%
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div *ngIf="topProducts.length === 0" class="no-data">
+                  <p>Aucune donnée de vente disponible</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance Indicators -->
+          <div class="kpi-section">
+            <div class="section-header">
+              <h2>🎯 Indicateurs de Performance (KPI)</h2>
+            </div>
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Taux de Conversion</div>
+                <div class="kpi-value">{{ getConversionRate() | number:'1.2-2' }}%</div>
+                <div class="kpi-description">Commandes / Produits</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Produits Actifs</div>
+                <div class="kpi-value">{{ getProductPerformanceRate() | number:'1.0-0' }}%</div>
+                <div class="kpi-description">{{ stats.activeProducts }} sur {{ stats.totalProducts }}</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Commandes en Attente</div>
+                <div class="kpi-value">{{ stats.pendingOrders }}</div>
+                <div class="kpi-description">À traiter rapidement</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Taux de Confirmation</div>
+                <div class="kpi-value">{{ stats.totalOrders > 0 ? (stats.confirmedOrders / stats.totalOrders) * 100 : 0 | number:'1.0-0' }}%</div>
+                <div class="kpi-description">{{ stats.confirmedOrders }} confirmées</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
