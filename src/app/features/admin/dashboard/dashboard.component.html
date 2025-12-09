@@ -1,14 +1,9 @@
-<div class="admin-layout">
-  <app-admin-sidebar></app-admin-sidebar>
-  <div class="admin-main">
-    <app-admin-navbar></app-admin-navbar>
-    <div class="admin-content">
-      <h1>🛍️ Administration AICHA SHOP</h1>
+<h1>🛍️ Administration AICHA SHOP</h1>
 
-      <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
-      <div *ngIf="error && !loading" class="error"><p>{{error}}</p><button (click)="loadDashboardData()">Réessayer</button></div>
+<div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
+<div *ngIf="error && !loading" class="error"><p>{{error}}</p><button (click)="loadDashboardData()">Réessayer</button></div>
 
-      <div *ngIf="!loading && !error">
+<div *ngIf="!loading && !error">
         <div class="stats-grid">
           <div class="stat-card" (click)="navigateTo('/admin/products')">
             <div class="stat-icon">📦</div>
@@ -84,8 +79,5 @@
               <p *ngIf="recentOrders.length === 0" class="empty">Aucune commande</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
