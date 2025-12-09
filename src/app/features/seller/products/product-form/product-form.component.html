@@ -155,6 +155,58 @@
             </div>
           </div>
 
+          <!-- Tailles -->
+          <div class="form-group">
+            <label>Tailles disponibles</label>
+            <div class="tags-input-container">
+              <div class="tags-list">
+                <span class="tag" *ngFor="let size of product.sizes; let i = index">
+                  {{ size }}
+                  <button type="button" class="tag-remove" (click)="removeSize(i)">×</button>
+                </span>
+              </div>
+              <div class="add-tag-input">
+                <input
+                  type="text"
+                  [(ngModel)]="newSize"
+                  name="newSize"
+                  class="form-control"
+                  placeholder="Ex: S, M, L, XL, 38, 40..."
+                  (keyup.enter)="addSize()"
+                />
+                <button type="button" class="btn btn-add-tag" (click)="addSize()">
+                  <i class="fas fa-plus"></i> Ajouter
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Couleurs -->
+          <div class="form-group">
+            <label>Couleurs disponibles</label>
+            <div class="tags-input-container">
+              <div class="tags-list">
+                <span class="tag" *ngFor="let color of product.colors; let i = index">
+                  {{ color }}
+                  <button type="button" class="tag-remove" (click)="removeColor(i)">×</button>
+                </span>
+              </div>
+              <div class="add-tag-input">
+                <input
+                  type="text"
+                  [(ngModel)]="newColor"
+                  name="newColor"
+                  class="form-control"
+                  placeholder="Ex: Rouge, Bleu, Noir, Blanc..."
+                  (keyup.enter)="addColor()"
+                />
+                <button type="button" class="btn btn-add-tag" (click)="addColor()">
+                  <i class="fas fa-plus"></i> Ajouter
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div *ngIf="error" class="error-message">
             <i class="fas fa-exclamation-circle"></i>
             {{ error }}

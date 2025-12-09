@@ -148,3 +148,75 @@ h1 { font-size: 2rem; color: #16a085; margin-bottom: 2rem; }
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+// Tags input for sizes and colors
+.tags-input-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #f8f9fa;
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    min-height: 32px;
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #16a085, #1abc9c);
+      color: white;
+      padding: 0.4rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+
+      .tag-remove {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 0.25rem;
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+
+  .add-tag-input {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    input {
+      flex: 1;
+      background: white;
+    }
+
+    .btn-add-tag {
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, #16a085, #1abc9c);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(22, 160, 133, 0.3);
+      }
+    }
+  }
+}

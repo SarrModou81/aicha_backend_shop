@@ -23,11 +23,17 @@ export class SellerProductFormComponent implements OnInit {
     brand: '',
     category_id: null,
     images: [] as string[],
+    sizes: [] as string[],
+    colors: [] as string[],
     stock_alert_threshold: 5
   };
 
   selectedFiles: File[] = [];
   imagePreviewUrls: string[] = [];
+
+  // Temporary inputs for sizes and colors
+  newSize = '';
+  newColor = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -60,6 +66,8 @@ export class SellerProductFormComponent implements OnInit {
           brand: productData.brand || '',
           category_id: productData.category_id || null,
           images: productData.images || [],
+          sizes: productData.sizes || [],
+          colors: productData.colors || [],
           stock_alert_threshold: productData.stock_alert_threshold || 5
         };
         this.imagePreviewUrls = [...this.product.images];
@@ -181,5 +189,31 @@ export class SellerProductFormComponent implements OnInit {
 
     // Ensuite soumettre le formulaire
     this.onSubmit();
+  }
+
+  addSize(): void {
+    if (this.newSize.trim()) {
+      if (!this.product.sizes.includes(this.newSize.trim())) {
+        this.product.sizes.push(this.newSize.trim());
+      }
+      this.newSize = '';
+    }
+  }
+
+  removeSize(index: number): void {
+    this.product.sizes.splice(index, 1);
+  }
+
+  addColor(): void {
+    if (this.newColor.trim()) {
+      if (!this.product.colors.includes(this.newColor.trim())) {
+        this.product.colors.push(this.newColor.trim());
+      }
+      this.newColor = '';
+    }
+  }
+
+  removeColor(index: number): void {
+    this.product.colors.splice(index, 1);
   }
 }
