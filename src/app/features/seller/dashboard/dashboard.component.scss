@@ -31,6 +31,58 @@
           font-weight: 600;
         }
 
+        // Loading & Error States
+        .loading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 4rem;
+          background: white;
+          border-radius: 12px;
+
+          .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e0e0e0;
+            border-top-color: #16a085;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+
+          p {
+            margin-top: 1rem;
+            color: #7f8c8d;
+          }
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+          background: #f8d7da;
+          color: #721c24;
+          padding: 2rem;
+          border-radius: 12px;
+          text-align: center;
+
+          .btn-retry {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: #16a085;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+
+            &:hover {
+              background: #138f75;
+            }
+          }
+        }
+
         .stats-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -66,16 +118,21 @@
               flex: 1;
 
               h3 {
-                margin: 0 0 0.5rem;
+                margin: 0 0 0.25rem;
                 font-size: 1.75rem;
                 color: #2c3e50;
                 font-weight: 700;
               }
 
               p {
-                margin: 0;
+                margin: 0 0 0.25rem;
                 color: #7f8c8d;
                 font-size: 0.95rem;
+              }
+
+              small {
+                color: #95a5a6;
+                font-size: 0.85rem;
               }
             }
 
@@ -134,11 +191,45 @@
           }
         }
 
-        .recent-orders {
+        // Dashboard Grid Layout
+        .dashboard-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .recent-orders, .top-products {
           background: white;
           border-radius: 12px;
           padding: 2rem;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+          .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+
+            h2 {
+              margin: 0;
+            }
+
+            .btn-link {
+              background: none;
+              border: none;
+              color: #16a085;
+              font-weight: 600;
+              cursor: pointer;
+              padding: 0.5rem 1rem;
+              border-radius: 6px;
+              transition: background 0.3s;
+
+              &:hover {
+                background: #e8f5f3;
+              }
+            }
+          }
 
           .orders-table {
             overflow-x: auto;
@@ -162,6 +253,10 @@
               tbody {
                 tr {
                   transition: background 0.3s;
+
+                  &.clickable {
+                    cursor: pointer;
+                  }
 
                   &:hover {
                     background: #f8f9fa;
@@ -188,12 +283,155 @@
                         color: #0c5460;
                       }
 
+                      &.processing {
+                        background: #cfe2ff;
+                        color: #084298;
+                      }
+
                       &.shipped {
                         background: #d4edda;
                         color: #155724;
                       }
+
+                      &.delivered {
+                        background: #d4edda;
+                        color: #155724;
+                      }
+
+                      &.cancelled {
+                        background: #f8d7da;
+                        color: #721c24;
+                      }
                     }
                   }
+                }
+              }
+            }
+
+            .no-data {
+              text-align: center;
+              padding: 3rem 1rem;
+              color: #95a5a6;
+            }
+          }
+        }
+
+        // Top Products Section
+        .top-products {
+          .products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .product-item {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              padding: 1rem;
+              border: 1px solid #e0e0e0;
+              border-radius: 8px;
+              transition: all 0.3s;
+
+              &:hover {
+                background: #f8f9fa;
+                border-color: #16a085;
+                box-shadow: 0 2px 8px rgba(22, 160, 133, 0.1);
+              }
+
+              .product-img {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 8px;
+              }
+
+              .product-info {
+                flex: 1;
+
+                h4 {
+                  margin: 0 0 0.25rem;
+                  font-size: 1rem;
+                  color: #2c3e50;
+                }
+
+                .product-sales {
+                  margin: 0;
+                  font-size: 0.85rem;
+                  color: #16a085;
+                  font-weight: 600;
+                }
+
+                .product-price {
+                  margin: 0.25rem 0 0;
+                  font-size: 0.9rem;
+                  color: #7f8c8d;
+                }
+              }
+            }
+
+            .no-data {
+              text-align: center;
+              padding: 3rem 1rem;
+              color: #95a5a6;
+            }
+          }
+        }
+
+        // Sales Chart Section
+        .sales-chart {
+          background: white;
+          border-radius: 12px;
+          padding: 2rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+          .chart-container {
+            margin-top: 2rem;
+
+            .chart-bars {
+              display: flex;
+              align-items: flex-end;
+              justify-content: space-around;
+              height: 300px;
+              padding: 1rem;
+              border-bottom: 2px solid #e0e0e0;
+              gap: 0.5rem;
+
+              .chart-bar-wrapper {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+                min-width: 60px;
+
+                .chart-bar {
+                  width: 100%;
+                  background: linear-gradient(180deg, #1abc9c 0%, #16a085 100%);
+                  border-radius: 6px 6px 0 0;
+                  position: relative;
+                  min-height: 20px;
+                  transition: all 0.3s;
+                  display: flex;
+                  align-items: flex-start;
+                  justify-content: center;
+                  padding-top: 0.5rem;
+
+                  &:hover {
+                    opacity: 0.8;
+                  }
+
+                  .bar-value {
+                    font-size: 0.75rem;
+                    color: white;
+                    font-weight: 600;
+                  }
+                }
+
+                .bar-label {
+                  font-size: 0.85rem;
+                  color: #7f8c8d;
+                  font-weight: 600;
+                  margin-top: 0.5rem;
                 }
               }
             }
@@ -205,8 +443,22 @@
 }
 
 // Responsive adjustments
+@media (max-width: 1200px) {
+  .seller-layout .seller-main .seller-content .dashboard-container .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .seller-layout .seller-main {
     margin-left: 70px;
+  }
+
+  .seller-layout .seller-main .seller-content .dashboard-container .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seller-layout .seller-main .seller-content .dashboard-container .quick-actions .actions-grid {
+    grid-template-columns: 1fr;
   }
 }
