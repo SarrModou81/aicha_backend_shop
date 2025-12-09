@@ -52,7 +52,7 @@
             <i class="fas fa-exclamation-triangle"></i>
           </div>
           <div class="stat-info">
-            <h3>{{ (filteredProducts.filter(p => p.stock <= 10 && p.stock > 0).length) }}</h3>
+            <h3>{{ getLowStockCount() }}</h3>
             <p>Stock faible</p>
           </div>
         </div>
@@ -62,7 +62,7 @@
             <i class="fas fa-times-circle"></i>
           </div>
           <div class="stat-info">
-            <h3>{{ (filteredProducts.filter(p => p.stock === 0).length) }}</h3>
+            <h3>{{ getOutOfStockCount() }}</h3>
             <p>Rupture</p>
           </div>
         </div>

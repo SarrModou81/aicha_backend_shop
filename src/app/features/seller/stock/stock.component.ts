@@ -129,4 +129,12 @@ export class SellerStockComponent implements OnInit {
   viewProduct(product: any): void {
     this.router.navigate(['/seller/products/edit', product.id]);
   }
+
+  getLowStockCount(): number {
+    return this.filteredProducts.filter(p => p.stock <= 10 && p.stock > 0).length;
+  }
+
+  getOutOfStockCount(): number {
+    return this.filteredProducts.filter(p => p.stock === 0).length;
+  }
 }

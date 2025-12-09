@@ -25,8 +25,8 @@ export class SellerProfileComponent implements OnInit {
 
   passwordForm = {
     current_password: '',
-    new_password: '',
-    confirm_password: ''
+    password: '',
+    password_confirmation: ''
   };
 
   constructor(
@@ -40,8 +40,8 @@ export class SellerProfileComponent implements OnInit {
 
   loadProfile(): void {
     this.loading = true;
-    this.authService.getUserProfile().subscribe({
-      next: (response) => {
+    this.authService.getCurrentUser().subscribe({
+      next: (response: any) => {
         this.user = response.user || response;
         this.profileForm = {
           name: this.user.name || '',
@@ -54,7 +54,7 @@ export class SellerProfileComponent implements OnInit {
         };
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erreur lors du chargement du profil:', error);
         this.loading = false;
       }
@@ -95,28 +95,28 @@ export class SellerProfileComponent implements OnInit {
   }
 
   changePassword(): void {
-    if (this.passwordForm.new_password !== this.passwordForm.confirm_password) {
+    if (this.passwordForm.password !== this.passwordForm.password_confirmation) {
       alert('Les mots de passe ne correspondent pas');
       return;
     }
 
-    if (this.passwordForm.new_password.length < 8) {
+    if (this.passwordForm.password.length < 8) {
       alert('Le mot de passe doit contenir au moins 8 caractères');
       return;
     }
 
     this.saving = true;
     this.authService.changePassword(this.passwordForm).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         alert('Mot de passe modifié avec succès');
         this.passwordForm = {
           current_password: '',
-          new_password: '',
-          confirm_password: ''
+          password: '',
+          password_confirmation: ''
         };
         this.saving = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erreur lors du changement de mot de passe:', error);
         alert('Erreur lors du changement de mot de passe');
         this.saving = false;
