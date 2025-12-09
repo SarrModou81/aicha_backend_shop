@@ -102,6 +102,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('products')->group(function () {
             Route::get('/', [SellerProductController::class, 'index']);
             Route::post('/', [SellerProductController::class, 'store']);
+            Route::post('/upload-image', [SellerProductController::class, 'uploadImage']);
             Route::get('/{id}', [SellerProductController::class, 'show']);
             Route::put('/{id}', [SellerProductController::class, 'update']);
             Route::delete('/{id}', [SellerProductController::class, 'destroy']);

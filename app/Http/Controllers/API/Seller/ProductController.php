@@ -194,4 +194,43 @@ class ProductController extends Controller
             'product' => $product,
         ]);
     }
+
+    /**
+     * Upload d'images pour un produit
+     */
+    public function uploadImage(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB max
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $image = $request->file('image');
+            $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+
+            // Stocker l'image dans public/storage/products
+            $path = $image->storeAs('products', $filename, 'public');
+
+            // Retourner l'URL complète de l'image
+            $url = asset('storage/' . $path);
+
+            return response()->json([
+                'message' => 'Image uploadée avec succès',
+                'url' => $url,
+                'path' => $path,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de l\'upload de l\'image',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
