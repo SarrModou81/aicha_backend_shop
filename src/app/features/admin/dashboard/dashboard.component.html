@@ -1,95 +1,87 @@
 <div class="admin-layout">
   <app-admin-sidebar></app-admin-sidebar>
-
   <div class="admin-main">
     <app-admin-navbar></app-admin-navbar>
-
     <div class="admin-content">
-      <div class="dashboard-container">
-        <h1>Tableau de bord</h1>
+      <h1>🛍️ Administration AICHA SHOP</h1>
 
-        <!-- Stats Cards -->
+      <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
+      <div *ngIf="error && !loading" class="error"><p>{{error}}</p><button (click)="loadDashboardData()">Réessayer</button></div>
+
+      <div *ngIf="!loading && !error">
         <div class="stats-grid">
-          <div class="stat-card products">
+          <div class="stat-card" (click)="navigateTo('/admin/products')">
             <div class="stat-icon">📦</div>
             <div class="stat-info">
-              <h3>{{ stats.totalProducts }}</h3>
+              <h3>{{stats.totalProducts}}</h3>
               <p>Produits</p>
+              <small *ngIf="stats.pendingProducts > 0" class="badge-warn">{{stats.pendingProducts}} en attente</small>
             </div>
           </div>
-
-          <div class="stat-card orders">
+          <div class="stat-card" (click)="navigateTo('/admin/sellers')">
+            <div class="stat-icon">🏪</div>
+            <div class="stat-info">
+              <h3>{{stats.totalSellers}}</h3>
+              <p>Vendeurs</p>
+              <small *ngIf="stats.pendingSellers > 0" class="badge-warn">{{stats.pendingSellers}} en attente</small>
+            </div>
+          </div>
+          <div class="stat-card" (click)="navigateTo('/admin/orders')">
             <div class="stat-icon">🛒</div>
             <div class="stat-info">
-              <h3>{{ stats.totalOrders }}</h3>
+              <h3>{{stats.totalOrders}}</h3>
               <p>Commandes</p>
             </div>
           </div>
-
-          <div class="stat-card users">
+          <div class="stat-card" (click)="navigateTo('/admin/users')">
             <div class="stat-icon">👥</div>
             <div class="stat-info">
-              <h3>{{ stats.totalUsers }}</h3>
+              <h3>{{stats.totalUsers}}</h3>
               <p>Utilisateurs</p>
             </div>
           </div>
-
-          <div class="stat-card revenue">
+          <div class="stat-card">
             <div class="stat-icon">💰</div>
             <div class="stat-info">
-              <h3>{{ stats.totalRevenue | number }} FCFA</h3>
-              <p>Revenu total</p>
+              <h3>{{stats.totalRevenue | number:'1.0-0'}} FCFA</h3>
+              <p>Revenu Total</p>
+            </div>
+          </div>
+          <div class="stat-card" (click)="navigateTo('/admin/categories')">
+            <div class="stat-icon">🏷️</div>
+            <div class="stat-info">
+              <h3>{{stats.totalCategories}}</h3>
+              <p>Catégories</p>
             </div>
           </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <h2>Actions rapides</h2>
-          <div class="actions-grid">
-            <button class="action-btn" type="button">
-              <span class="btn-icon">➕</span>
-              <span>Ajouter un produit</span>
-            </button>
-            <button class="action-btn" type="button">
-              <span class="btn-icon">👤</span>
-              <span>Gérer les utilisateurs</span>
-            </button>
-            <button class="action-btn" type="button">
-              <span class="btn-icon">📊</span>
-              <span>Voir les statistiques</span>
-            </button>
-            <button class="action-btn" type="button">
-              <span class="btn-icon">⚙️</span>
-              <span>Paramètres</span>
-            </button>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h2>Produits Populaires</h2></div>
+            <div class="list">
+              <div *ngFor="let product of topProducts" class="list-item">
+                <img [src]="product.images?.[0]" alt="" class="thumb"/>
+                <div class="flex-1">
+                  <strong>{{product.name}}</strong>
+                  <p>{{product.total_sold || 0}} ventes</p>
+                </div>
+              </div>
+              <p *ngIf="topProducts.length === 0" class="empty">Aucun produit</p>
+            </div>
           </div>
-        </div>
 
-        <!-- Recent Activity -->
-        <div class="recent-activity">
-          <h2>Activité récente</h2>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-icon">🛒</div>
-              <div class="activity-details">
-                <p class="activity-title">Nouvelle commande #1234</p>
-                <p class="activity-time">Il y a 5 minutes</p>
+          <div class="card">
+            <div class="card-header"><h2>Commandes Récentes</h2></div>
+            <div class="list">
+              <div *ngFor="let order of recentOrders" class="list-item">
+                <div class="flex-1">
+                  <strong>#{{order.id}}</strong>
+                  <p>{{order.total | number:'1.0-0'}} FCFA</p>
+                </div>
+                <span class="badge" [ngClass]="order.status">{{order.status}}</span>
               </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon">👤</div>
-              <div class="activity-details">
-                <p class="activity-title">Nouvel utilisateur inscrit</p>
-                <p class="activity-time">Il y a 15 minutes</p>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon">📦</div>
-              <div class="activity-details">
-                <p class="activity-title">Produit ajouté au catalogue</p>
-                <p class="activity-time">Il y a 1 heure</p>
-              </div>
+              <p *ngIf="recentOrders.length === 0" class="empty">Aucune commande</p>
             </div>
           </div>
         </div>
