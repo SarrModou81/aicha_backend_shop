@@ -176,3 +176,39 @@
 body.sidebar-collapsed .admin-navbar {
   left: 70px;
 }
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .admin-navbar {
+    left: 70px;
+
+    .navbar-container {
+      padding: 0 1rem;
+    }
+
+    .navbar-right {
+      .user-info {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-navbar {
+    left: 0;
+    height: 60px;
+
+    .navbar-left .page-title {
+      font-size: 1.25rem;
+    }
+
+    .navbar-right {
+      gap: 0.75rem;
+
+      .dropdown-icon {
+        display: none;
+      }
+    }
+  }
+}

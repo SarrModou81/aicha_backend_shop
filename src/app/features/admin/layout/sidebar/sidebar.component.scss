@@ -148,3 +148,33 @@
     }
   }
 }
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 70px;
+
+    &:not(.collapsed) {
+      .logo-text,
+      .menu-label,
+      .sidebar-footer {
+        display: none;
+      }
+
+      .menu-link {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+}
