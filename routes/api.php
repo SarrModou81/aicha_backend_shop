@@ -152,6 +152,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/{id}/reset-password', [AdminUserController::class, 'resetPassword']);
         });
 
+        // Gestion des vendeurs
+        Route::prefix('sellers')->group(function () {
+            Route::get('/', [AdminUserController::class, 'sellers']);
+            Route::post('/{id}/approve', [AdminUserController::class, 'approveSeller']);
+            Route::post('/{id}/suspend', [AdminUserController::class, 'suspendSeller']);
+        });
+
         // Modération des produits
         Route::prefix('products')->group(function () {
             Route::get('/', [AdminProductController::class, 'index']);

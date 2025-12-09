@@ -234,4 +234,73 @@ class UserController extends Controller
 
         return response()->json($vendors);
     }
+
+    /**
+     * Liste tous les vendeurs avec leurs statistiques
+     */
+    public function sellers(Request $request)
+    {
+        $query = User::where('role', 'vendeur')
+            ->withCount('products');
+
+        if ($request->has('verified')) {
+            $query->where('is_verified', $request->verified);
+        }
+
+        if ($request->has('active')) {
+            $query->where('is_active', $request->active);
+        }
+
+        $sellers = $query->latest()->get();
+
+        return response()->json($sellers);
+    }
+
+    /**
+     * Approuver un vendeur
+     */
+    public function approveSeller($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'vendeur') {
+            return response()->json([
+                'message' => 'Cet utilisateur n\'est pas un vendeur.',
+            ], 400);
+        }
+
+        $user->update([
+            'is_verified' => true,
+            'is_active' => true,
+        ]);
+
+        return response()->json([
+            'message' => 'Vendeur approuvé avec succès.',
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Suspendre un vendeur
+     */
+    public function suspendSeller(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'vendeur') {
+            return response()->json([
+                'message' => 'Cet utilisateur n\'est pas un vendeur.',
+            ], 400);
+        }
+
+        $user->update(['is_active' => false]);
+
+        // Révoquer tous les tokens
+        $user->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Vendeur suspendu avec succès.',
+            'user' => $user,
+        ]);
+    }
 }
