@@ -28,7 +28,7 @@
           <table>
             <thead>
               <tr>
-                <th>Image</th><th>Nom</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Actions</th>
+                <th>Image</th><th>Nom</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Approuvé</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -38,6 +38,7 @@
                 <td>{{ (product.discount_price || product.price) | number }} FCFA</td>
                 <td><span class="stock-badge" [class.low]="product.stock < 10">{{ product.stock }}</span></td>
                 <td><span class="status-badge" [class.active]="product.is_visible">{{ product.is_visible ? 'Visible' : 'Masqué' }}</span></td>
+                <td><span class="approval-badge" [class.approved]="product.is_approved">{{ product.is_approved ? '✓ Approuvé' : '⏳ En attente' }}</span></td>
                 <td class="actions">
                   <button type="button" (click)="editProduct(product.id)" title="Modifier">✏️</button>
                   <button type="button" (click)="toggleVisibility(product)" [title]="product.is_visible ? 'Masquer' : 'Afficher'">{{ product.is_visible ? '👁️' : '🚫' }}</button>
