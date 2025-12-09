@@ -60,6 +60,12 @@ export class SellerService {
     return this.http.post(`${this.API_URL}/products/${id}/toggle-visibility`, {});
   }
 
+  uploadImage(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post(`${this.API_URL}/products/upload-image`, formData);
+  }
+
   // Orders
   getOrders(page: number = 1): Observable<any> {
     return this.http.get(`${this.API_URL}/orders`, {

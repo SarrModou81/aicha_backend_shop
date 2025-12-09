@@ -37,11 +37,11 @@
                 <td><strong>{{ product.name }}</strong></td>
                 <td>{{ (product.discount_price || product.price) | number }} FCFA</td>
                 <td><span class="stock-badge" [class.low]="product.stock < 10">{{ product.stock }}</span></td>
-                <td><span class="status-badge" [class.active]="product.is_active">{{ product.is_active ? 'Actif' : 'Inactif' }}</span></td>
+                <td><span class="status-badge" [class.active]="product.is_visible">{{ product.is_visible ? 'Visible' : 'Masqué' }}</span></td>
                 <td class="actions">
                   <button type="button" (click)="viewProduct(product.id)" title="Voir">👁️</button>
                   <button type="button" (click)="editProduct(product.id)" title="Modifier">✏️</button>
-                  <button type="button" (click)="toggleVisibility(product)" title="Toggle">{{ product.is_active ? '🔒' : '🔓' }}</button>
+                  <button type="button" (click)="toggleVisibility(product)" title="Afficher/Masquer">{{ product.is_visible ? '👁️' : '🚫' }}</button>
                   <button type="button" (click)="deleteProduct(product)" title="Supprimer">🗑️</button>
                 </td>
               </tr>

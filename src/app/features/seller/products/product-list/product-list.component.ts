@@ -55,8 +55,8 @@ export class SellerProductListComponent implements OnInit {
       const matchesSearch = !this.searchTerm ||
         product.name.toLowerCase().includes(this.searchTerm.toLowerCase());
       const matchesStatus = this.statusFilter === 'all' ||
-        (this.statusFilter === 'active' && product.is_active) ||
-        (this.statusFilter === 'inactive' && !product.is_active);
+        (this.statusFilter === 'active' && product.is_visible) ||
+        (this.statusFilter === 'inactive' && !product.is_visible);
       return matchesSearch && matchesStatus;
     });
   }
@@ -83,10 +83,16 @@ export class SellerProductListComponent implements OnInit {
 
   toggleVisibility(product: any): void {
     this.sellerService.toggleProductVisibility(product.id).subscribe({
-      next: () => {
-        product.is_active = !product.is_active;
+      next: (response: any) => {
+        // Update the product with the response from backend
+        if (response && response.product) {
+          product.is_visible = response.product.is_visible;
+        } else {
+          product.is_visible = !product.is_visible;
+        }
+        alert(product.is_visible ? 'Produit affiché' : 'Produit masqué');
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erreur:', error);
         alert('Impossible de modifier la visibilité');
       }

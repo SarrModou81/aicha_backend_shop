@@ -5,61 +5,179 @@
     <div class="seller-content">
       <div class="form-container">
         <h1>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un produit</h1>
-        
-        <form (ngSubmit)="onSubmit()" class="product-form">
+
+        <form (ngSubmit)="onSubmitWithImages()" class="product-form">
+          <!-- Images Section -->
+          <div class="form-group">
+            <label>Images du produit *</label>
+            <div class="image-upload-section">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="onFileSelected($event)"
+                #fileInput
+                style="display: none"
+              />
+              <button
+                type="button"
+                class="btn btn-upload"
+                (click)="fileInput.click()"
+                [disabled]="uploading"
+              >
+                <i class="fas fa-upload"></i>
+                {{ uploading ? 'Upload en cours...' : 'Ajouter des images' }}
+              </button>
+              <small>Formats acceptés: JPG, PNG, GIF, WEBP (max 5MB par image)</small>
+            </div>
+
+            <!-- Image Previews -->
+            <div class="image-previews" *ngIf="imagePreviewUrls.length > 0">
+              <div class="image-preview" *ngFor="let url of imagePreviewUrls; let i = index">
+                <img [src]="url" [alt]="'Image ' + (i + 1)" />
+                <button
+                  type="button"
+                  class="btn-remove-image"
+                  (click)="removeImage(i)"
+                  title="Supprimer"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group">
             <label>Nom du produit *</label>
-            <input type="text" [(ngModel)]="product.name" name="name" required class="form-control"/>
+            <input
+              type="text"
+              [(ngModel)]="product.name"
+              name="name"
+              required
+              class="form-control"
+              placeholder="Nom du produit"
+            />
           </div>
-          
+
           <div class="form-group">
-            <label>Description</label>
-            <textarea [(ngModel)]="product.description" name="description" rows="4" class="form-control"></textarea>
+            <label>Description *</label>
+            <textarea
+              [(ngModel)]="product.description"
+              name="description"
+              rows="4"
+              required
+              class="form-control"
+              placeholder="Description détaillée du produit"
+            ></textarea>
           </div>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label>Prix (FCFA) *</label>
-              <input type="number" [(ngModel)]="product.price" name="price" required class="form-control"/>
+              <input
+                type="number"
+                [(ngModel)]="product.price"
+                name="price"
+                required
+                min="0"
+                class="form-control"
+                placeholder="0"
+              />
             </div>
-            
+
             <div class="form-group">
               <label>Prix promotionnel (FCFA)</label>
-              <input type="number" [(ngModel)]="product.discount_price" name="discount_price" class="form-control"/>
+              <input
+                type="number"
+                [(ngModel)]="product.discount_price"
+                name="discount_price"
+                min="0"
+                class="form-control"
+                placeholder="Prix en promotion (optionnel)"
+              />
             </div>
           </div>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label>Stock *</label>
-              <input type="number" [(ngModel)]="product.stock" name="stock" required class="form-control"/>
+              <input
+                type="number"
+                [(ngModel)]="product.stock"
+                name="stock"
+                required
+                min="0"
+                class="form-control"
+                placeholder="Quantité en stock"
+              />
             </div>
-            
+
             <div class="form-group">
-              <label>SKU</label>
-              <input type="text" [(ngModel)]="product.sku" name="sku" class="form-control"/>
+              <label>Seuil d'alerte de stock</label>
+              <input
+                type="number"
+                [(ngModel)]="product.stock_alert_threshold"
+                name="stock_alert_threshold"
+                min="0"
+                class="form-control"
+                placeholder="5"
+              />
             </div>
           </div>
-          
-          <div class="form-group">
-            <label>Marque</label>
-            <input type="text" [(ngModel)]="product.brand" name="brand" class="form-control"/>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Marque</label>
+              <input
+                type="text"
+                [(ngModel)]="product.brand"
+                name="brand"
+                class="form-control"
+                placeholder="Marque du produit"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Catégorie *</label>
+              <select
+                [(ngModel)]="product.category_id"
+                name="category_id"
+                required
+                class="form-control"
+              >
+                <option [value]="null">Sélectionner une catégorie</option>
+                <option [value]="1">Vêtements</option>
+                <option [value]="2">Chaussures</option>
+                <option [value]="3">Accessoires</option>
+                <option [value]="4">Électronique</option>
+                <option [value]="5">Maison & Décoration</option>
+              </select>
+            </div>
           </div>
-          
-          <div class="form-group">
-            <label>
-              <input type="checkbox" [(ngModel)]="product.is_active" name="is_active"/>
-              Produit actif
-            </label>
+
+          <div *ngIf="error" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ error }}
           </div>
-          
-          <div *ngIf="error" class="error-message">{{ error }}</div>
-          
+
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="loading">
-              {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loading || uploading"
+            >
+              <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+              {{ loading ? 'Enregistrement...' : (isEditMode ? 'Mettre à jour' : 'Créer le produit') }}
             </button>
-            <button type="button" class="btn btn-secondary" (click)="cancel()">Annuler</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="cancel()"
+              [disabled]="loading || uploading"
+            >
+              <i class="fas fa-times"></i>
+              Annuler
+            </button>
           </div>
         </form>
       </div>
