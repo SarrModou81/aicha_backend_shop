@@ -11,23 +11,14 @@ export class SellerService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Obtenir les statistiques du dashboard
-   */
   getDashboardStats(): Observable<any> {
     return this.http.get(`${this.API_URL}/dashboard/stats`);
   }
 
-  /**
-   * Obtenir les commandes récentes
-   */
   getRecentOrders(): Observable<any> {
     return this.http.get(`${this.API_URL}/dashboard/recent-orders`);
   }
 
-  /**
-   * Obtenir les statistiques de ventes par mois
-   */
   getSalesByMonth(year?: number): Observable<any> {
     const url = `${this.API_URL}/dashboard/sales-by-month`;
     if (year) {
@@ -36,12 +27,72 @@ export class SellerService {
     return this.http.get(url);
   }
 
-  /**
-   * Obtenir les produits les plus vendus
-   */
   getTopProducts(limit: number = 10): Observable<any> {
     return this.http.get(`${this.API_URL}/dashboard/top-products`, {
       params: { limit: limit.toString() }
     });
+  }
+
+  // Products
+  getProducts(page: number = 1, perPage: number = 10): Observable<any> {
+    return this.http.get(`${this.API_URL}/products`, {
+      params: { page: page.toString(), per_page: perPage.toString() }
+    });
+  }
+
+  getProduct(id: number): Observable<any> {
+    return this.http.get(`${this.API_URL}/products/${id}`);
+  }
+
+  createProduct(data: any): Observable<any> {
+    return this.http.post(`${this.API_URL}/products`, data);
+  }
+
+  updateProduct(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/products/${id}`, data);
+  }
+
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.API_URL}/products/${id}`);
+  }
+
+  toggleProductVisibility(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/products/${id}/toggle-visibility`, {});
+  }
+
+  // Orders
+  getOrders(page: number = 1): Observable<any> {
+    return this.http.get(`${this.API_URL}/orders`, {
+      params: { page: page.toString() }
+    });
+  }
+
+  getOrder(id: number): Observable<any> {
+    return this.http.get(`${this.API_URL}/orders/${id}`);
+  }
+
+  confirmOrder(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/orders/${id}/confirm`, {});
+  }
+
+  markAsProcessing(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/orders/${id}/processing`, {});
+  }
+
+  markAsShipped(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/orders/${id}/shipped`, {});
+  }
+
+  // Stock
+  getStock(): Observable<any> {
+    return this.http.get(`${this.API_URL}/stock`);
+  }
+
+  getLowStock(): Observable<any> {
+    return this.http.get(`${this.API_URL}/stock/low-stock`);
+  }
+
+  updateStock(productId: number, quantity: number): Observable<any> {
+    return this.http.put(`${this.API_URL}/stock/products/${productId}`, { stock: quantity });
   }
 }

@@ -1,0 +1,288 @@
+<div class="seller-layout">
+  <app-seller-sidebar></app-seller-sidebar>
+
+  <div class="main-content">
+    <app-seller-navbar></app-seller-navbar>
+
+    <div class="content-area">
+      <div class="settings-header">
+        <h1>Paramètres</h1>
+      </div>
+
+      <div *ngIf="loading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i> Chargement...
+      </div>
+
+      <div *ngIf="!loading" class="settings-container">
+        <!-- Notification Settings -->
+        <div class="settings-card">
+          <div class="card-header">
+            <div class="header-left">
+              <i class="fas fa-bell"></i>
+              <h3>Notifications</h3>
+            </div>
+          </div>
+
+          <form class="settings-form" (ngSubmit)="updateNotificationSettings()">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Notifications par email</h4>
+                <p>Recevoir des notifications par email</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="notificationSettings.email_notifications" name="email_notifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Notifications de commande</h4>
+                <p>Être notifié des nouvelles commandes</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="notificationSettings.order_notifications" name="order_notifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Alertes de stock</h4>
+                <p>Recevoir des alertes en cas de stock faible</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="notificationSettings.stock_alerts" name="stock_alerts">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Emails marketing</h4>
+                <p>Recevoir des conseils et actualités</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="notificationSettings.marketing_emails" name="marketing_emails">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Notifications SMS</h4>
+                <p>Recevoir des notifications par SMS</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="notificationSettings.sms_notifications" name="sms_notifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="saving">
+                <i class="fas" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Shop Settings -->
+        <div class="settings-card">
+          <div class="card-header">
+            <div class="header-left">
+              <i class="fas fa-store"></i>
+              <h3>Boutique</h3>
+            </div>
+          </div>
+
+          <form class="settings-form" (ngSubmit)="updateShopSettings()">
+            <div class="form-group">
+              <label>Nom de la boutique *</label>
+              <input
+                type="text"
+                [(ngModel)]="shopSettings.shop_name"
+                name="shop_name"
+                class="form-control"
+                placeholder="Ma boutique"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <textarea
+                [(ngModel)]="shopSettings.shop_description"
+                name="shop_description"
+                class="form-control"
+                rows="4"
+                placeholder="Décrivez votre boutique..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Logo de la boutique</label>
+              <div class="file-upload">
+                <input
+                  type="file"
+                  (change)="handleFileUpload($event)"
+                  accept="image/*"
+                  id="shop-logo"
+                />
+                <label for="shop-logo" class="file-label">
+                  <i class="fas fa-upload"></i>
+                  Télécharger un logo
+                </label>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email de contact</label>
+                <input
+                  type="email"
+                  [(ngModel)]="shopSettings.contact_email"
+                  name="contact_email"
+                  class="form-control"
+                  placeholder="contact@boutique.com"
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Téléphone de contact</label>
+                <input
+                  type="tel"
+                  [(ngModel)]="shopSettings.contact_phone"
+                  name="contact_phone"
+                  class="form-control"
+                  placeholder="+221 XX XXX XX XX"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Horaires d'ouverture</label>
+              <input
+                type="text"
+                [(ngModel)]="shopSettings.business_hours"
+                name="business_hours"
+                class="form-control"
+                placeholder="Lun-Ven: 9h-18h, Sam: 9h-13h"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Politique de retour</label>
+              <textarea
+                [(ngModel)]="shopSettings.return_policy"
+                name="return_policy"
+                class="form-control"
+                rows="3"
+                placeholder="Décrivez votre politique de retour..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Informations de livraison</label>
+              <textarea
+                [(ngModel)]="shopSettings.shipping_info"
+                name="shipping_info"
+                class="form-control"
+                rows="3"
+                placeholder="Décrivez vos options de livraison..."
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="saving">
+                <i class="fas" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Payment Settings -->
+        <div class="settings-card">
+          <div class="card-header">
+            <div class="header-left">
+              <i class="fas fa-credit-card"></i>
+              <h3>Paiement</h3>
+            </div>
+          </div>
+
+          <form class="settings-form" (ngSubmit)="updatePaymentSettings()">
+            <div class="form-group">
+              <label>Méthode de paiement préférée</label>
+              <select [(ngModel)]="paymentSettings.payment_method" name="payment_method" class="form-control">
+                <option value="bank">Virement bancaire</option>
+                <option value="mobile">Mobile Money</option>
+                <option value="both">Les deux</option>
+              </select>
+            </div>
+
+            <div *ngIf="paymentSettings.payment_method === 'bank' || paymentSettings.payment_method === 'both'" class="payment-section">
+              <h4><i class="fas fa-university"></i> Informations bancaires</h4>
+
+              <div class="form-group">
+                <label>Nom de la banque</label>
+                <input
+                  type="text"
+                  [(ngModel)]="paymentSettings.bank_name"
+                  name="bank_name"
+                  class="form-control"
+                  placeholder="Banque XXX"
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Numéro de compte</label>
+                <input
+                  type="text"
+                  [(ngModel)]="paymentSettings.account_number"
+                  name="account_number"
+                  class="form-control"
+                  placeholder="XXXX XXXX XXXX XXXX"
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Nom du titulaire</label>
+                <input
+                  type="text"
+                  [(ngModel)]="paymentSettings.account_name"
+                  name="account_name"
+                  class="form-control"
+                  placeholder="Nom complet"
+                />
+              </div>
+            </div>
+
+            <div *ngIf="paymentSettings.payment_method === 'mobile' || paymentSettings.payment_method === 'both'" class="payment-section">
+              <h4><i class="fas fa-mobile-alt"></i> Mobile Money</h4>
+
+              <div class="form-group">
+                <label>Numéro Mobile Money</label>
+                <input
+                  type="tel"
+                  [(ngModel)]="paymentSettings.mobile_money_number"
+                  name="mobile_money_number"
+                  class="form-control"
+                  placeholder="+221 XX XXX XX XX"
+                />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="saving">
+                <i class="fas" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,238 @@
+.seller-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 250px;
+}
+
+.content-area {
+  padding: 30px;
+  flex: 1;
+}
+
+.profile-header {
+  margin-bottom: 30px;
+
+  h1 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin: 0;
+  }
+}
+
+.loading-spinner {
+  padding: 60px;
+  text-align: center;
+  font-size: 18px;
+  color: #16a085;
+
+  i {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+
+  .profile-avatar {
+    .avatar-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #16a085, #1abc9c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: bold;
+      color: white;
+      text-transform: uppercase;
+    }
+  }
+
+  .profile-info {
+    flex: 1;
+
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 32px;
+      color: #2c3e50;
+    }
+
+    p {
+      margin: 8px 0;
+      color: #7f8c8d;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      i {
+        color: #16a085;
+        width: 20px;
+      }
+
+      &.user-role {
+        font-weight: 600;
+        color: #16a085;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.info-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 30px;
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+
+    h3 {
+      margin: 0;
+      font-size: 22px;
+      color: #2c3e50;
+    }
+  }
+}
+
+.profile-form {
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #dce4ec;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background-color: white;
+
+      &:focus {
+        outline: none;
+        border-color: #16a085;
+        box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+      }
+
+      &:disabled {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+      }
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    small {
+      display: block;
+      margin-top: 5px;
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+  }
+
+  .form-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background-color: #16a085;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #138d75;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(22, 160, 133, 0.3);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+
+    &:hover:not(:disabled) {
+      background-color: #bdc3c7;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
