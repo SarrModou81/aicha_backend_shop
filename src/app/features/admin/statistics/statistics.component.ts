@@ -1,0 +1,140 @@
+import { Component, OnInit } from '@angular/core';
+import { AdminService } from '../../../core/services/admin.service';
+
+@Component({
+  selector: 'app-admin-statistics',
+  template: `
+    <h1>📊 Statistiques Avancées</h1>
+
+    <div *ngIf="loading" class="loading">Chargement...</div>
+
+    <div *ngIf="!loading" class="stats-container">
+      <!-- KPIs -->
+      <div class="kpis-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Revenu Total</div>
+          <div class="kpi-value">{{stats.totalRevenue | number:'1.0-0'}} FCFA</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Commandes</div>
+          <div class="kpi-value">{{stats.totalOrders}}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Produits</div>
+          <div class="kpi-value">{{stats.totalProducts}}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Utilisateurs</div>
+          <div class="kpi-value">{{stats.totalUsers}}</div>
+        </div>
+      </div>
+
+      <!-- Ventes par mois -->
+      <div class="chart-section">
+        <h2>Ventes par Mois (2024)</h2>
+        <div class="chart-container">
+          <div class="chart-bars">
+            <div *ngFor="let sale of salesByMonth" class="chart-bar-wrapper">
+              <div class="chart-bar" [style.height.%]="getBarHeight(sale.total)">
+                <span class="bar-value">{{sale.total | number:'1.0-0'}}</span>
+              </div>
+              <span class="bar-label">{{getMonthName(sale.month)}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top produits -->
+      <div class="top-products">
+        <h2>Top 10 Produits</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Vendeur</th>
+              <th>Ventes</th>
+              <th>Revenu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of topProducts">
+              <td>{{product.name}}</td>
+              <td>{{product.seller?.name || 'N/A'}}</td>
+              <td>{{product.total_sold || 0}}</td>
+              <td>{{product.total_revenue | number:'1.0-0'}} FCFA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `,
+  styles: [`
+    h1 { margin-bottom: 1.5rem; color: #2c3e50; }
+    .loading { text-align: center; padding: 3rem; }
+    .kpis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .kpi-card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+    .kpi-label { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 0.5rem; }
+    .kpi-value { font-size: 1.8rem; font-weight: 700; color: #2c3e50; }
+    .chart-section { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .chart-container { margin-top: 1.5rem; }
+    .chart-bars { display: flex; justify-content: space-between; align-items: flex-end; height: 300px; gap: 0.5rem; }
+    .chart-bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .chart-bar { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 4px 4px 0 0; position: relative; min-height: 20px; }
+    .bar-value { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+    .bar-label { margin-top: 0.5rem; font-size: 0.75rem; color: #7f8c8d; }
+    .top-products { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    .table th { background: #f8f9fa; font-weight: 600; color: #2c3e50; }
+  `]
+})
+export class AdminStatisticsComponent implements OnInit {
+  loading = true;
+  stats: any = {};
+  salesByMonth: any[] = [];
+  topProducts: any[] = [];
+
+  constructor(private adminService: AdminService) {}
+
+  ngOnInit() {
+    this.loadStatistics();
+  }
+
+  loadStatistics() {
+    this.loading = true;
+
+    this.adminService.getDashboardStats().subscribe({
+      next: (data) => {
+        this.stats = data;
+        this.loading = false;
+      },
+      error: (e) => {
+        console.error('Erreur stats:', e);
+        this.loading = false;
+      }
+    });
+
+    this.adminService.getSalesByMonth(2024).subscribe({
+      next: (data) => {
+        this.salesByMonth = data || [];
+      }
+    });
+
+    this.adminService.getTopProducts(10).subscribe({
+      next: (data) => {
+        this.topProducts = data || [];
+      }
+    });
+  }
+
+  getBarHeight(value: number): number {
+    if (this.salesByMonth.length === 0) return 0;
+    const max = Math.max(...this.salesByMonth.map(s => s.total));
+    return (value / max) * 100;
+  }
+
+  getMonthName(month: number): string {
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+    return months[month - 1] || '';
+  }
+}

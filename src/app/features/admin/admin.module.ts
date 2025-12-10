@@ -9,6 +9,10 @@ import { AdminNavbarComponent } from './layout/navbar/navbar.component';
 import { AdminProductsComponent } from './products/products.component';
 import { AdminSellersComponent } from './sellers/sellers.component';
 import { AdminCategoriesComponent } from './categories/categories.component';
+import { AdminUsersComponent } from './users/users.component';
+import { AdminOrdersComponent } from './orders/orders.component';
+import { AdminStatisticsComponent } from './statistics/statistics.component';
+import { AdminSettingsComponent } from './settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,11 @@ import { AdminCategoriesComponent } from './categories/categories.component';
     AdminNavbarComponent,
     AdminProductsComponent,
     AdminSellersComponent,
-    AdminCategoriesComponent
+    AdminCategoriesComponent,
+    AdminUsersComponent,
+    AdminOrdersComponent,
+    AdminStatisticsComponent,
+    AdminSettingsComponent
   ],
   imports: [
     CommonModule,

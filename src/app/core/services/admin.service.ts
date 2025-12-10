@@ -130,6 +130,14 @@ export class AdminService {
     return this.http.post(`${this.API_URL}/users/${id}/unban`, {});
   }
 
+  activateUser(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/users/${id}/activate`, {});
+  }
+
+  deactivateUser(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/users/${id}/deactivate`, {});
+  }
+
   // ========== Orders Management ==========
   getAllOrders(params?: any): Observable<any> {
     return this.http.get(`${this.API_URL}/orders`, { params });
@@ -141,6 +149,10 @@ export class AdminService {
 
   updateOrderStatus(id: number, status: string): Observable<any> {
     return this.http.put(`${this.API_URL}/orders/${id}/status`, { status });
+  }
+
+  markOrderAsDelivered(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/orders/${id}/mark-delivered`, {});
   }
 
   // ========== Statistics ==========
@@ -170,6 +182,22 @@ export class AdminService {
   }
 
   updateSettings(data: any): Observable<any> {
-    return this.http.put(`${this.API_URL}/settings`, data);
+    return this.http.post(`${this.API_URL}/settings`, data);
+  }
+
+  getDeliveryZones(): Observable<any> {
+    return this.http.get(`${this.API_URL}/settings/delivery-zones`);
+  }
+
+  createDeliveryZone(data: any): Observable<any> {
+    return this.http.post(`${this.API_URL}/settings/delivery-zones`, data);
+  }
+
+  updateDeliveryZone(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/settings/delivery-zones/${id}`, data);
+  }
+
+  deleteDeliveryZone(id: number): Observable<any> {
+    return this.http.delete(`${this.API_URL}/settings/delivery-zones/${id}`);
   }
 }
