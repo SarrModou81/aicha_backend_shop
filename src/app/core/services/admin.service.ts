@@ -93,6 +93,10 @@ export class AdminService {
     return this.http.post(`${this.API_URL}/sellers/${id}/approve`, {});
   }
 
+  disapproveSeller(id: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/sellers/${id}/disapprove`, {});
+  }
+
   suspendSeller(id: number, reason?: string): Observable<any> {
     return this.http.post(`${this.API_URL}/sellers/${id}/suspend`, { reason });
   }

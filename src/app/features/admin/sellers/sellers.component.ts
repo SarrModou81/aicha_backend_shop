@@ -18,8 +18,7 @@ import { AdminService } from '../../../core/services/admin.service';
           </td>
           <td>
             <button *ngIf="!s.is_verified" (click)="approveSeller(s.id)" class="btn-sm success">✓ Approuver</button>
-            <button *ngIf="s.is_verified && s.is_active" (click)="suspendSeller(s.id)" class="btn-sm warning">⏸ Suspendre</button>
-            <button *ngIf="s.is_verified && !s.is_active" (click)="activateSeller(s.id)" class="btn-sm success">✓ Activer</button>
+            <button *ngIf="s.is_verified" (click)="disapproveSeller(s.id)" class="btn-sm danger">✗ Désapprouver</button>
           </td>
         </tr>
       </tbody>
@@ -34,8 +33,8 @@ import { AdminService } from '../../../core/services/admin.service';
     .btn-sm{padding:6px 12px;margin:0 4px;border:none;border-radius:4px;cursor:pointer;font-size:13px;transition:all 0.2s}
     .btn-sm.success{background:#4caf50;color:#fff}
     .btn-sm.success:hover{background:#45a049}
-    .btn-sm.warning{background:#ff9800;color:#fff}
-    .btn-sm.warning:hover{background:#fb8c00}
+    .btn-sm.danger{background:#f44336;color:#fff}
+    .btn-sm.danger:hover{background:#da190b}
   `]
 })
 export class AdminSellersComponent implements OnInit {
@@ -53,25 +52,20 @@ export class AdminSellersComponent implements OnInit {
   }
 
   approveSeller(id: number) {
-    this.adminService.approveSeller(id).subscribe({
-      next: () => { alert('Vendeur approuvé'); this.loadSellers(); },
-      error: (e) => alert('Erreur')
-    });
-  }
-
-  suspendSeller(id: number) {
-    if (confirm('Suspendre ce vendeur?')) {
-      this.adminService.suspendSeller(id).subscribe({
-        next: () => { alert('Vendeur suspendu'); this.loadSellers(); },
+    if (confirm('Approuver ce vendeur?')) {
+      this.adminService.approveSeller(id).subscribe({
+        next: () => { alert('Vendeur approuvé'); this.loadSellers(); },
         error: (e) => alert('Erreur')
       });
     }
   }
 
-  activateSeller(id: number) {
-    this.adminService.activateSeller(id).subscribe({
-      next: () => { alert('Vendeur activé'); this.loadSellers(); },
-      error: (e) => alert('Erreur')
-    });
+  disapproveSeller(id: number) {
+    if (confirm('Désapprouver ce vendeur?')) {
+      this.adminService.disapproveSeller(id).subscribe({
+        next: () => { alert('Vendeur désapprouvé'); this.loadSellers(); },
+        error: (e) => alert('Erreur')
+      });
+    }
   }
 }
