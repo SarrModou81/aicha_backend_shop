@@ -24,7 +24,7 @@ class DashboardController extends Controller
             'total_users' => User::where('role', 'client')->count(),
             'total_sellers' => User::where('role', 'vendeur')->count(),
             'pending_sellers' => User::where('role', 'vendeur')->where('is_verified', false)->count(),
-            'total_revenue' => Order::where('status', 'delivered')->sum('total_amount'),
+            'total_revenue' => Order::where('status', 'delivered')->sum('total') ?? 0,
             'total_categories' => Category::count(),
             'pending_orders' => Order::where('status', 'pending')->count(),
             'confirmed_orders' => Order::where('status', 'confirmed')->count(),
@@ -60,7 +60,7 @@ class DashboardController extends Controller
             ->select(
                 DB::raw('MONTH(created_at) as month'),
                 DB::raw('COUNT(*) as total_orders'),
-                DB::raw('SUM(total_amount) as total_revenue')
+                DB::raw('SUM(total) as total_revenue')
             )
             ->groupBy('month')
             ->orderBy('month')
