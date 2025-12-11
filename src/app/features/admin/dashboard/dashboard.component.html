@@ -1,9 +1,20 @@
-<h1>🛍️ Administration AICHA SHOP</h1>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>🛍️ Tableau de bord Administration</h1>
+    <p class="subtitle">Vue d'ensemble de votre boutique AICHA SHOP</p>
+  </div>
 
-<div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
-<div *ngIf="error && !loading" class="error"><p>{{error}}</p><button (click)="loadDashboardData()">Réessayer</button></div>
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des statistiques...</p>
+  </div>
 
-<div *ngIf="!loading && !error">
+  <div *ngIf="error && !loading" class="error">
+    <p>{{error}}</p>
+    <button (click)="loadDashboardData()">Réessayer</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="dashboard-content">
         <div class="stats-grid">
           <div class="stat-card" (click)="navigateTo('/admin/products')">
             <div class="stat-icon">📦</div>
@@ -79,5 +90,7 @@
               <p *ngIf="recentOrders.length === 0" class="empty">Aucune commande</p>
             </div>
           </div>
+        </div>
+      </div>
   </div>
 </div>

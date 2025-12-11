@@ -1,11 +1,33 @@
-h1 {
-  font-size: 2rem;
-  color: #1a202c;
-  margin: 0 0 2rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.dashboard-container {
+  max-width: 100%;
+  width: 100%;
+}
+
+.dashboard-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+
+  h1 {
+    font-size: 2.25rem;
+    color: #1a202c;
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .subtitle {
+    font-size: 1.05rem;
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.dashboard-content {
+  width: 100%;
 }
 
 // Loading & Error States
@@ -80,9 +102,17 @@ h1 {
 // Stats Grid
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-bottom: 2.5rem;
+
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
 
   .stat-card {
     background: white;
@@ -198,9 +228,13 @@ h1 {
 // Grid 2 columns
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   margin-bottom: 2rem;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
@@ -313,29 +347,21 @@ h1 {
 }
 
 // Responsive adjustments
-@media (max-width: 1200px) {
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
-  h1 {
-    font-size: 1.75rem;
-  }
+  .dashboard-header {
+    margin-bottom: 1.5rem;
 
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    h1 {
+      font-size: 1.75rem;
+    }
 
-    .stat-card {
-      padding: 1.5rem;
+    .subtitle {
+      font-size: 0.95rem;
     }
   }
 
-  .grid-2 {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .stats-grid .stat-card {
+    padding: 1.5rem;
   }
 
   .card {
@@ -344,8 +370,14 @@ h1 {
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 1.5rem;
+  .dashboard-header {
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+    }
   }
 
   .stats-grid .stat-card {
@@ -364,5 +396,9 @@ h1 {
 
   .card {
     padding: 1.25rem;
+  }
+
+  .grid-2 {
+    gap: 1.5rem;
   }
 }
