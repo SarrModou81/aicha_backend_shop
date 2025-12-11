@@ -156,6 +156,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('sellers')->group(function () {
             Route::get('/', [AdminUserController::class, 'sellers']);
             Route::post('/{id}/approve', [AdminUserController::class, 'approveSeller']);
+            Route::post('/{id}/disapprove', [AdminUserController::class, 'disapproveSeller']);
             Route::post('/{id}/suspend', [AdminUserController::class, 'suspendSeller']);
         });
 

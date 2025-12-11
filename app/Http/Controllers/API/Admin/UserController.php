@@ -281,6 +281,29 @@ class UserController extends Controller
     }
 
     /**
+     * Désapprouver un vendeur
+     */
+    public function disapproveSeller($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'vendeur') {
+            return response()->json([
+                'message' => 'Cet utilisateur n\'est pas un vendeur.',
+            ], 400);
+        }
+
+        $user->update([
+            'is_verified' => false,
+        ]);
+
+        return response()->json([
+            'message' => 'Vendeur désapprouvé avec succès.',
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * Suspendre un vendeur
      */
     public function suspendSeller(Request $request, $id)
