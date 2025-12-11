@@ -1,37 +1,139 @@
 <div class="orders-container">
-  <h1>Mes Commandes</h1>
+  <div class="page-header">
+    <h1>📦 Gestion des Commandes</h1>
+    <p class="subtitle">Gérez vos commandes et mettez à jour leur statut</p>
+  </div>
 
-  <select [(ngModel)]="statusFilter" class="status-filter">
-    <option value="all">Toutes</option>
-    <option value="pending">En attente</option>
-    <option value="confirmed">Confirmées</option>
-    <option value="processing">En traitement</option>
-    <option value="shipped">Expédiées</option>
-    <option value="delivered">Livrées</option>
-  </select>
+  <!-- Filtres par statut -->
+  <div class="status-filters">
+    <button
+      *ngFor="let status of statusOptions"
+      type="button"
+      class="filter-btn"
+      [class.active]="statusFilter === status.value"
+      (click)="statusFilter = status.value"
+    >
+      {{ status.label }}
+      <span class="count" *ngIf="statusFilter === status.value">
+        ({{ filteredOrders.length }})
+      </span>
+    </button>
+  </div>
 
-  <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
-  <div *ngIf="error && !loading" class="error-message"><p>{{ error }}</p></div>
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des commandes...</p>
+  </div>
 
-  <div *ngIf="!loading && !error" class="orders-table">
-    <table>
-      <thead>
-        <tr><th>#</th><th>Client</th><th>Montant</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let order of filteredOrders">
-          <td>#{{ order.id }}</td>
-          <td>{{ order.user?.name || 'N/A' }}</td>
-          <td>{{ order.total_amount | number }} FCFA</td>
-          <td><span class="status-badge" [class]="order.status">{{ order.status }}</span></td>
-          <td>{{ order.created_at | date:'short' }}</td>
-          <td class="actions">
-            <button type="button" (click)="viewOrder(order.id)">👁️</button>
-            <button *ngIf="order.status === 'pending'" type="button" (click)="confirmOrder(order)">✅</button>
-            <button *ngIf="order.status === 'confirmed'" type="button" (click)="markAsShipped(order)">🚚</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Erreur -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>{{ error }}</p>
+    <button type="button" class="btn btn-primary" (click)="loadOrders()">
+      Réessayer
+    </button>
+  </div>
+
+  <!-- Liste des commandes -->
+  <div *ngIf="!loading && !error" class="orders-list">
+    <!-- Aucune commande -->
+    <div *ngIf="filteredOrders.length === 0" class="no-orders">
+      <div class="empty-icon">📭</div>
+      <h2>Aucune commande trouvée</h2>
+      <p *ngIf="statusFilter === 'all'">Vous n'avez pas encore reçu de commande.</p>
+      <p *ngIf="statusFilter !== 'all'">Aucune commande avec le statut "{{ getStatusLabel(statusFilter) }}".</p>
+    </div>
+
+    <!-- Cartes de commandes -->
+    <div class="orders-grid">
+      <div *ngFor="let order of filteredOrders" class="order-card" [class.updating]="updatingOrderId === order.id">
+        <!-- En-tête de la carte -->
+        <div class="order-header">
+          <div class="order-info">
+            <h3>Commande #{{ order.id }}</h3>
+            <p class="order-date">{{ order.created_at | date:'dd/MM/yyyy à HH:mm' }}</p>
+          </div>
+          <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+            {{ getStatusLabel(order.status) }}
+          </span>
+        </div>
+
+        <!-- Corps de la carte -->
+        <div class="order-body">
+          <div class="order-detail-row">
+            <span class="label">👤 Client:</span>
+            <span class="value">{{ order.user?.name || 'N/A' }}</span>
+          </div>
+          <div class="order-detail-row">
+            <span class="label">💰 Montant:</span>
+            <span class="value total">{{ order.total || order.total_amount }} FCFA</span>
+          </div>
+          <div class="order-detail-row" *ngIf="order.items_count">
+            <span class="label">📦 Articles:</span>
+            <span class="value">{{ order.items_count }} article(s)</span>
+          </div>
+          <div class="order-detail-row" *ngIf="order.payment_method">
+            <span class="label">💳 Paiement:</span>
+            <span class="value">
+              <span *ngIf="order.payment_method === 'cash'">À la livraison</span>
+              <span *ngIf="order.payment_method === 'card'">Carte bancaire</span>
+              <span *ngIf="order.payment_method === 'wave'">Wave</span>
+              <span *ngIf="order.payment_method === 'orange_money'">Orange Money</span>
+              <span *ngIf="order.payment_method === 'free_money'">Free Money</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Pied de la carte - Actions -->
+        <div class="order-footer">
+          <button
+            type="button"
+            class="btn btn-view"
+            (click)="viewOrder(order.id)"
+            [disabled]="updatingOrderId === order.id"
+          >
+            👁️ Voir détails
+          </button>
+
+          <!-- Bouton Confirmer (si pending) -->
+          <button
+            *ngIf="canConfirm(order)"
+            type="button"
+            class="btn btn-confirm"
+            (click)="confirmOrder(order)"
+            [disabled]="updatingOrderId === order.id"
+          >
+            ✅ Confirmer
+          </button>
+
+          <!-- Bouton En préparation (si confirmed) -->
+          <button
+            *ngIf="canMarkAsProcessing(order)"
+            type="button"
+            class="btn btn-processing"
+            (click)="markAsProcessing(order)"
+            [disabled]="updatingOrderId === order.id"
+          >
+            📦 En préparation
+          </button>
+
+          <!-- Bouton Expédier (si processing) -->
+          <button
+            *ngIf="canMarkAsShipped(order)"
+            type="button"
+            class="btn btn-shipped"
+            (click)="markAsShipped(order)"
+            [disabled]="updatingOrderId === order.id"
+          >
+            🚚 Expédier
+          </button>
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="updatingOrderId === order.id" class="updating-overlay">
+          <div class="spinner-small"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
