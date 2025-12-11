@@ -16,11 +16,12 @@ import { AdminService } from '../../../core/services/admin.service';
       <p>Aucune catégorie pour le moment.</p>
     </div>
     <table *ngIf="categories.length > 0" class="table">
-      <thead><tr><th>Nom</th><th>Description</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Nom</th><th>Parent</th><th>Description</th><th>Actions</th></tr></thead>
       <tbody>
         <tr *ngFor="let c of categories">
           <td>{{c.name}}</td>
-          <td>{{c.description}}</td>
+          <td>{{c.parent?.name || '-'}}</td>
+          <td>{{c.description || '-'}}</td>
           <td>
             <button (click)="editCategory(c)" class="btn-sm">✏️</button>
             <button (click)="deleteCategory(c.id)" class="btn-sm danger">🗑️</button>
