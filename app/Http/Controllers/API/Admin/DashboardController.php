@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,10 +19,13 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_products' => Product::count(),
+            'pending_products' => Product::where('is_approved', false)->count(),
             'total_orders' => Order::count(),
             'total_users' => User::where('role', 'client')->count(),
             'total_sellers' => User::where('role', 'vendeur')->count(),
+            'pending_sellers' => User::where('role', 'vendeur')->where('is_verified', false)->count(),
             'total_revenue' => Order::where('status', 'delivered')->sum('total_amount'),
+            'total_categories' => Category::count(),
             'pending_orders' => Order::where('status', 'pending')->count(),
             'confirmed_orders' => Order::where('status', 'confirmed')->count(),
         ];
@@ -39,7 +43,9 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return response()->json($orders);
+        return response()->json([
+            'data' => $orders
+        ]);
     }
 
     /**
