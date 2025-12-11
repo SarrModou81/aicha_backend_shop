@@ -61,7 +61,9 @@ export class AdminCategoriesComponent implements OnInit {
 
   loadCategories() {
     this.adminService.getAllCategories().subscribe({
-      next: (data) => { this.categories = Array.isArray(data) ? data : (data.data || []); },
+      next: (data) => {
+        this.categories = Array.isArray(data) ? data : (data.categories || data.data || []);
+      },
       error: (e) => console.error(e)
     });
   }

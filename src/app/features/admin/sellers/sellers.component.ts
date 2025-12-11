@@ -12,16 +12,31 @@ import { AdminService } from '../../../core/services/admin.service';
           <td>{{s.name}}</td>
           <td>{{s.email}}</td>
           <td>{{s.products_count || 0}}</td>
-          <td><span class="badge" [class.success]="s.is_approved">{{s.is_approved ? 'Actif' : 'En attente'}}</span></td>
           <td>
-            <button *ngIf="!s.is_approved" (click)="approveSeller(s.id)" class="btn-sm success">✓ Approuver</button>
-            <button *ngIf="s.is_approved" (click)="suspendSeller(s.id)" class="btn-sm warning">⏸ Suspendre</button>
+            <span *ngIf="s.is_verified" class="status-approved">✓ Approuvé</span>
+            <span *ngIf="!s.is_verified" class="badge-pending">En attente d'approbation</span>
+          </td>
+          <td>
+            <button *ngIf="!s.is_verified" (click)="approveSeller(s.id)" class="btn-sm success">✓ Approuver</button>
+            <button *ngIf="s.is_verified && s.is_active" (click)="suspendSeller(s.id)" class="btn-sm warning">⏸ Suspendre</button>
+            <button *ngIf="s.is_verified && !s.is_active" (click)="activateSeller(s.id)" class="btn-sm success">✓ Activer</button>
           </td>
         </tr>
       </tbody>
     </table>
   `,
-  styles: [`.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;text-align:left;border-bottom:1px solid #ddd}.badge{padding:4px 12px;border-radius:12px;font-size:12px;background:#ffc107;color:#000}.badge.success{background:#4caf50;color:#fff}.btn-sm{padding:6px 12px;margin:0 4px;border:none;border-radius:4px;cursor:pointer}.btn-sm.success{background:#4caf50;color:#fff}.btn-sm.warning{background:#ff9800;color:#fff}`]
+  styles: [`
+    .table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+    .table th,.table td{padding:12px;text-align:left;border-bottom:1px solid #ddd}
+    .table th{background:#f8f9fa;font-weight:600;color:#2c3e50}
+    .status-approved{color:#4caf50;font-weight:600;font-size:14px}
+    .badge-pending{padding:4px 12px;border-radius:12px;font-size:12px;background:#ffc107;color:#000}
+    .btn-sm{padding:6px 12px;margin:0 4px;border:none;border-radius:4px;cursor:pointer;font-size:13px;transition:all 0.2s}
+    .btn-sm.success{background:#4caf50;color:#fff}
+    .btn-sm.success:hover{background:#45a049}
+    .btn-sm.warning{background:#ff9800;color:#fff}
+    .btn-sm.warning:hover{background:#fb8c00}
+  `]
 })
 export class AdminSellersComponent implements OnInit {
   sellers: any[] = [];
@@ -51,5 +66,12 @@ export class AdminSellersComponent implements OnInit {
         error: (e) => alert('Erreur')
       });
     }
+  }
+
+  activateSeller(id: number) {
+    this.adminService.activateSeller(id).subscribe({
+      next: () => { alert('Vendeur activé'); this.loadSellers(); },
+      error: (e) => alert('Erreur')
+    });
   }
 }
