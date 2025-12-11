@@ -38,6 +38,14 @@ class Product extends Model
         'is_approved' => 'boolean',
     ];
 
+    protected $appends = [
+        'final_price',
+        'is_on_sale',
+        'discount_percentage',
+        'average_rating',
+        'reviews_count',
+    ];
+
     // Relations
 
     public function user()
