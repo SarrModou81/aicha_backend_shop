@@ -69,7 +69,7 @@
         <div class="items-list">
           <div *ngFor="let item of order.items" class="order-item">
             <img
-              [src]="item.product?.images && item.product.images[0] || 'assets/images/placeholder.jpg'"
+              [src]="item.product?.images?.[0] || 'assets/images/placeholder.jpg'"
               [alt]="item.product_name"
               class="item-image"
             />
@@ -148,7 +148,7 @@
             </div>
             <div class="detail-row" *ngIf="order.payment?.transaction_id">
               <span>Transaction:</span>
-              <span class="transaction-id">{{ order.payment.transaction_id }}</span>
+              <span class="transaction-id">{{ order.payment?.transaction_id }}</span>
             </div>
           </div>
         </div>
