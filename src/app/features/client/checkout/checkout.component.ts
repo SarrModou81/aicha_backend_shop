@@ -35,11 +35,11 @@ export class CheckoutComponent implements OnInit {
   };
 
   paymentMethods = [
-    { value: 'cash', label: 'Paiement à la livraison', icon: '💵' },
-    { value: 'card', label: 'Carte bancaire', icon: '💳' },
-    { value: 'wave', label: 'Wave', icon: '📱' },
-    { value: 'orange_money', label: 'Orange Money', icon: '📱' },
-    { value: 'free_money', label: 'Free Money', icon: '📱' }
+    { value: 'cash' as const, label: 'Paiement à la livraison', icon: '💵' },
+    { value: 'card' as const, label: 'Carte bancaire', icon: '💳' },
+    { value: 'wave' as const, label: 'Wave', icon: '📱' },
+    { value: 'orange_money' as const, label: 'Orange Money', icon: '📱' },
+    { value: 'free_money' as const, label: 'Free Money', icon: '📱' }
   ];
 
   constructor(
