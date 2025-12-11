@@ -1,45 +1,37 @@
-<div class="seller-layout">
-  <app-seller-sidebar></app-seller-sidebar>
-  <div class="seller-main">
-    <app-seller-navbar></app-seller-navbar>
-    <div class="seller-content">
-      <div class="orders-container">
-        <h1>Mes Commandes</h1>
-        
-        <select [(ngModel)]="statusFilter" class="status-filter">
-          <option value="all">Toutes</option>
-          <option value="pending">En attente</option>
-          <option value="confirmed">Confirmées</option>
-          <option value="processing">En traitement</option>
-          <option value="shipped">Expédiées</option>
-          <option value="delivered">Livrées</option>
-        </select>
+<div class="orders-container">
+  <h1>Mes Commandes</h1>
 
-        <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
-        <div *ngIf="error && !loading" class="error-message"><p>{{ error }}</p></div>
+  <select [(ngModel)]="statusFilter" class="status-filter">
+    <option value="all">Toutes</option>
+    <option value="pending">En attente</option>
+    <option value="confirmed">Confirmées</option>
+    <option value="processing">En traitement</option>
+    <option value="shipped">Expédiées</option>
+    <option value="delivered">Livrées</option>
+  </select>
 
-        <div *ngIf="!loading && !error" class="orders-table">
-          <table>
-            <thead>
-              <tr><th>#</th><th>Client</th><th>Montant</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let order of filteredOrders">
-                <td>#{{ order.id }}</td>
-                <td>{{ order.user?.name || 'N/A' }}</td>
-                <td>{{ order.total_amount | number }} FCFA</td>
-                <td><span class="status-badge" [class]="order.status">{{ order.status }}</span></td>
-                <td>{{ order.created_at | date:'short' }}</td>
-                <td class="actions">
-                  <button type="button" (click)="viewOrder(order.id)">👁️</button>
-                  <button *ngIf="order.status === 'pending'" type="button" (click)="confirmOrder(order)">✅</button>
-                  <button *ngIf="order.status === 'confirmed'" type="button" (click)="markAsShipped(order)">🚚</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
+  <div *ngIf="error && !loading" class="error-message"><p>{{ error }}</p></div>
+
+  <div *ngIf="!loading && !error" class="orders-table">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Client</th><th>Montant</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of filteredOrders">
+          <td>#{{ order.id }}</td>
+          <td>{{ order.user?.name || 'N/A' }}</td>
+          <td>{{ order.total_amount | number }} FCFA</td>
+          <td><span class="status-badge" [class]="order.status">{{ order.status }}</span></td>
+          <td>{{ order.created_at | date:'short' }}</td>
+          <td class="actions">
+            <button type="button" (click)="viewOrder(order.id)">👁️</button>
+            <button *ngIf="order.status === 'pending'" type="button" (click)="confirmOrder(order)">✅</button>
+            <button *ngIf="order.status === 'confirmed'" type="button" (click)="markAsShipped(order)">🚚</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

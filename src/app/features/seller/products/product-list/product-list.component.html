@@ -1,64 +1,56 @@
-<div class="seller-layout">
-  <app-seller-sidebar></app-seller-sidebar>
-  <div class="seller-main">
-    <app-seller-navbar></app-seller-navbar>
-    <div class="seller-content">
-      <div class="products-container">
-        <div class="page-header">
-          <h1>Mes Produits</h1>
-          <button type="button" class="btn btn-primary" (click)="addProduct()">
-            ➕ Ajouter un produit
-          </button>
-        </div>
+<div class="products-container">
+  <div class="page-header">
+    <h1>Mes Produits</h1>
+    <button type="button" class="btn btn-primary" (click)="addProduct()">
+      ➕ Ajouter un produit
+    </button>
+  </div>
 
-        <div class="filters-bar">
-          <input type="text" placeholder="Rechercher..." [(ngModel)]="searchTerm" (input)="onSearch()" class="search-input"/>
-          <select [(ngModel)]="statusFilter" (change)="onStatusChange()" class="status-filter">
-            <option value="all">Tous</option>
-            <option value="active">Actifs</option>
-            <option value="inactive">Inactifs</option>
-          </select>
-          <span class="results-count">{{ filteredProducts.length }} produit(s)</span>
-        </div>
+  <div class="filters-bar">
+    <input type="text" placeholder="Rechercher..." [(ngModel)]="searchTerm" (input)="onSearch()" class="search-input"/>
+    <select [(ngModel)]="statusFilter" (change)="onStatusChange()" class="status-filter">
+      <option value="all">Tous</option>
+      <option value="active">Actifs</option>
+      <option value="inactive">Inactifs</option>
+    </select>
+    <span class="results-count">{{ filteredProducts.length }} produit(s)</span>
+  </div>
 
-        <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
-        <div *ngIf="error && !loading" class="error-message"><p>{{ error }}</p></div>
+  <div *ngIf="loading" class="loading"><div class="spinner"></div><p>Chargement...</p></div>
+  <div *ngIf="error && !loading" class="error-message"><p>{{ error }}</p></div>
 
-        <div *ngIf="!loading && !error" class="products-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Image</th><th>Nom</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Approuvé</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let product of filteredProducts">
-                <td><img [src]="product.images?.[0] || 'assets/placeholder.jpg'" alt="" class="product-img"/></td>
-                <td><strong>{{ product.name }}</strong></td>
-                <td>{{ (product.discount_price || product.price) | number }} FCFA</td>
-                <td><span class="stock-badge" [class.low]="product.stock < 10">{{ product.stock }}</span></td>
-                <td><span class="status-badge" [class.active]="product.is_visible">{{ product.is_visible ? 'Visible' : 'Masqué' }}</span></td>
-                <td><span class="approval-badge" [class.approved]="product.is_approved">{{ product.is_approved ? '✓ Approuvé' : '⏳ En attente' }}</span></td>
-                <td class="actions">
-                  <button type="button" (click)="editProduct(product.id)" title="Modifier">✏️</button>
-                  <button type="button" (click)="toggleVisibility(product)" [title]="product.is_visible ? 'Masquer' : 'Afficher'">{{ product.is_visible ? '👁️' : '🚫' }}</button>
-                  <button type="button" (click)="deleteProduct(product)" title="Supprimer">🗑️</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div *ngIf="filteredProducts.length === 0" class="no-products">
-            <p>Aucun produit</p>
-            <button type="button" class="btn btn-primary" (click)="addProduct()">Ajouter votre premier produit</button>
-          </div>
-        </div>
-
-        <div *ngIf="totalPages > 1" class="pagination">
-          <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Précédent</button>
-          <button *ngFor="let page of paginationPages" type="button" [class.active]="page === currentPage" (click)="goToPage(page)">{{ page }}</button>
-          <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Suivant</button>
-        </div>
-      </div>
+  <div *ngIf="!loading && !error" class="products-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th><th>Nom</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Approuvé</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts">
+          <td><img [src]="product.images?.[0] || 'assets/placeholder.jpg'" alt="" class="product-img"/></td>
+          <td><strong>{{ product.name }}</strong></td>
+          <td>{{ (product.discount_price || product.price) | number }} FCFA</td>
+          <td><span class="stock-badge" [class.low]="product.stock < 10">{{ product.stock }}</span></td>
+          <td><span class="status-badge" [class.active]="product.is_visible">{{ product.is_visible ? 'Visible' : 'Masqué' }}</span></td>
+          <td><span class="approval-badge" [class.approved]="product.is_approved">{{ product.is_approved ? '✓ Approuvé' : '⏳ En attente' }}</span></td>
+          <td class="actions">
+            <button type="button" (click)="editProduct(product.id)" title="Modifier">✏️</button>
+            <button type="button" (click)="toggleVisibility(product)" [title]="product.is_visible ? 'Masquer' : 'Afficher'">{{ product.is_visible ? '👁️' : '🚫' }}</button>
+            <button type="button" (click)="deleteProduct(product)" title="Supprimer">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <p>Aucun produit</p>
+      <button type="button" class="btn btn-primary" (click)="addProduct()">Ajouter votre premier produit</button>
     </div>
+  </div>
+
+  <div *ngIf="totalPages > 1" class="pagination">
+    <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Précédent</button>
+    <button *ngFor="let page of paginationPages" type="button" [class.active]="page === currentPage" (click)="goToPage(page)">{{ page }}</button>
+    <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Suivant</button>
   </div>
 </div>

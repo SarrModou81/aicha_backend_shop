@@ -1,19 +1,13 @@
-<div class="seller-layout">
-  <app-seller-sidebar></app-seller-sidebar>
+<div class="profile-page">
+  <div class="profile-header">
+    <h1>Mon Profil</h1>
+  </div>
 
-  <div class="main-content">
-    <app-seller-navbar></app-seller-navbar>
+  <div *ngIf="loading" class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i> Chargement...
+  </div>
 
-    <div class="content-area">
-      <div class="profile-header">
-        <h1>Mon Profil</h1>
-      </div>
-
-      <div *ngIf="loading" class="loading-spinner">
-        <i class="fas fa-spinner fa-spin"></i> Chargement...
-      </div>
-
-      <div *ngIf="!loading" class="profile-container">
+  <div *ngIf="!loading" class="profile-container">
         <!-- Profile Overview Card -->
         <div class="profile-card">
           <div class="profile-avatar">
@@ -186,6 +180,4 @@
           </form>
         </div>
       </div>
-    </div>
-  </div>
 </div>

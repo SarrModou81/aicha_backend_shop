@@ -1,9 +1,4 @@
-<div class="seller-layout">
-  <app-seller-sidebar></app-seller-sidebar>
-  <div class="seller-main">
-    <app-seller-navbar></app-seller-navbar>
-    <div class="seller-content">
-      <div class="form-container">
+<div class="form-container">
         <h1>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un produit</h1>
 
         <form (ngSubmit)="onSubmitWithImages()" class="product-form">
@@ -232,7 +227,4 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  </div>
 </div>
