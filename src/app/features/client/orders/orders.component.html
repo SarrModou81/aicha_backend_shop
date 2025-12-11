@@ -54,46 +54,80 @@
       </div>
 
       <div class="order-body">
-        <!-- Adresse de livraison -->
-        <div class="order-section">
-          <h4>Livraison</h4>
-          <p *ngIf="order.delivery_address">
-            {{ order.delivery_address.street }}<br>
-            {{ order.delivery_address.city }}, {{ order.delivery_address.postal_code }}<br>
-            {{ order.delivery_address.country }}
-          </p>
-        </div>
-
-        <!-- Résumé de la commande -->
-        <div class="order-section">
-          <h4>Résumé</h4>
-          <div class="order-summary">
-            <div class="summary-row">
-              <span>Sous-total:</span>
-              <span>{{ order.subtotal }} FCFA</span>
-            </div>
-            <div class="summary-row">
-              <span>Livraison:</span>
-              <span>{{ order.delivery_fee }} FCFA</span>
-            </div>
-            <div class="summary-row total">
-              <span>Total:</span>
-              <span>{{ order.total }} FCFA</span>
+        <!-- Articles de la commande -->
+        <div class="order-items" *ngIf="order.items && order.items.length > 0">
+          <h4>Articles ({{ order.items.length }})</h4>
+          <div class="items-list">
+            <div *ngFor="let item of order.items" class="order-item">
+              <img
+                [src]="item.product?.images && item.product.images[0] || 'assets/images/placeholder.jpg'"
+                [alt]="item.product_name"
+                class="item-image"
+              />
+              <div class="item-details">
+                <div class="item-name">{{ item.product_name }}</div>
+                <div class="item-variants" *ngIf="item.size || item.color">
+                  <span *ngIf="item.size">Taille: {{ item.size }}</span>
+                  <span *ngIf="item.color"> • Couleur: {{ item.color }}</span>
+                </div>
+                <div class="item-quantity">Quantité: {{ item.quantity }}</div>
+              </div>
+              <div class="item-price">{{ item.subtotal }} FCFA</div>
             </div>
           </div>
         </div>
 
-        <!-- Mode de paiement -->
-        <div class="order-section">
-          <h4>Paiement</h4>
-          <p>
-            <strong>Méthode:</strong> {{ order.payment_method }}<br>
-            <strong>Statut:</strong>
-            <span [class.paid]="order.payment_status === 'paid'"
-                  [class.pending]="order.payment_status === 'pending'">
-              {{ order.payment_status === 'paid' ? 'Payé' : 'En attente' }}
-            </span>
-          </p>
+        <!-- Informations de livraison et paiement -->
+        <div class="order-details-grid">
+          <!-- Adresse de livraison -->
+          <div class="order-section">
+            <h4>📍 Livraison</h4>
+            <p *ngIf="order.delivery_address || order.address">
+              <strong>{{ (order.delivery_address || order.address)?.full_name }}</strong><br>
+              {{ (order.delivery_address || order.address)?.phone }}<br>
+              {{ (order.delivery_address || order.address)?.street || (order.delivery_address || order.address)?.address_line1 }}<br>
+              {{ (order.delivery_address || order.address)?.city }}<span *ngIf="(order.delivery_address || order.address)?.postal_code">, {{ (order.delivery_address || order.address)?.postal_code }}</span><br>
+              {{ (order.delivery_address || order.address)?.country }}
+            </p>
+          </div>
+
+          <!-- Mode de paiement -->
+          <div class="order-section">
+            <h4>💳 Paiement</h4>
+            <p>
+              <strong>Méthode:</strong>
+              <span *ngIf="order.payment_method === 'cash'">Paiement à la livraison</span>
+              <span *ngIf="order.payment_method === 'card'">Carte bancaire</span>
+              <span *ngIf="order.payment_method === 'wave'">Wave</span>
+              <span *ngIf="order.payment_method === 'orange_money'">Orange Money</span>
+              <span *ngIf="order.payment_method === 'free_money'">Free Money</span>
+              <br>
+              <strong>Statut:</strong>
+              <span [class.paid]="order.payment?.status === 'completed' || order.payment_status === 'paid'"
+                    [class.pending]="order.payment?.status === 'pending' || order.payment_status === 'pending'">
+                {{ (order.payment?.status === 'completed' || order.payment_status === 'paid') ? 'Payé' : 'En attente' }}
+              </span>
+            </p>
+          </div>
+
+          <!-- Résumé de la commande -->
+          <div class="order-section">
+            <h4>📋 Résumé</h4>
+            <div class="order-summary">
+              <div class="summary-row">
+                <span>Sous-total:</span>
+                <span>{{ order.subtotal }} FCFA</span>
+              </div>
+              <div class="summary-row">
+                <span>Livraison:</span>
+                <span>{{ order.delivery_fee || order.shipping_cost || 0 }} FCFA</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total:</span>
+                <span>{{ order.total }} FCFA</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

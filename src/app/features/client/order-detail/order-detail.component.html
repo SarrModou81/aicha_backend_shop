@@ -1,0 +1,180 @@
+<div class="order-detail-container">
+  <!-- Header -->
+  <div class="detail-header">
+    <button type="button" class="btn-back" (click)="goBack()">
+      ← Retour aux commandes
+    </button>
+    <div class="header-title" *ngIf="order">
+      <h1>Commande #{{ order.order_number || order.id }}</h1>
+      <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+        {{ getStatusLabel(order.status) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>{{ error }}</p>
+    <button type="button" class="btn btn-primary" (click)="goBack()">
+      Retour aux commandes
+    </button>
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!loading && !error && order" class="order-detail-content">
+    <!-- Timeline de statut -->
+    <div class="status-timeline" *ngIf="order.status !== 'cancelled'">
+      <h2>📍 Suivi de commande</h2>
+      <div class="timeline">
+        <div
+          *ngFor="let step of statusTimeline; let i = index"
+          class="timeline-step"
+          [class.completed]="isStatusCompleted(step.key)"
+          [class.active]="isStatusActive(step.key)"
+        >
+          <div class="step-indicator">
+            <div class="step-icon">{{ step.icon }}</div>
+            <div class="step-line" *ngIf="i < statusTimeline.length - 1"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-label">{{ step.label }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="tracking-info" *ngIf="order.tracking_number">
+        <strong>Numéro de suivi:</strong> {{ order.tracking_number }}
+      </div>
+    </div>
+
+    <!-- Commande annulée -->
+    <div class="cancelled-notice" *ngIf="order.status === 'cancelled'">
+      <div class="cancelled-icon">❌</div>
+      <h3>Commande annulée</h3>
+      <p *ngIf="order.cancellation_reason">
+        <strong>Raison:</strong> {{ order.cancellation_reason }}
+      </p>
+    </div>
+
+    <!-- Informations générales -->
+    <div class="order-info-grid">
+      <!-- Articles commandés -->
+      <div class="info-card">
+        <h2>📦 Articles commandés</h2>
+        <div class="items-list">
+          <div *ngFor="let item of order.items" class="order-item">
+            <img
+              [src]="item.product?.images && item.product.images[0] || 'assets/images/placeholder.jpg'"
+              [alt]="item.product_name"
+              class="item-image"
+            />
+            <div class="item-details">
+              <div class="item-name">{{ item.product_name }}</div>
+              <div class="item-variants" *ngIf="item.size || item.color">
+                <span *ngIf="item.size">Taille: {{ item.size }}</span>
+                <span *ngIf="item.color"> • Couleur: {{ item.color }}</span>
+              </div>
+              <div class="item-meta">
+                <span class="item-price">{{ item.price }} FCFA</span>
+                <span class="item-quantity">x {{ item.quantity }}</span>
+              </div>
+            </div>
+            <div class="item-subtotal">{{ item.subtotal }} FCFA</div>
+          </div>
+        </div>
+
+        <!-- Résumé financier -->
+        <div class="order-summary">
+          <div class="summary-row">
+            <span>Sous-total:</span>
+            <span>{{ order.subtotal }} FCFA</span>
+          </div>
+          <div class="summary-row">
+            <span>Frais de livraison:</span>
+            <span>{{ order.delivery_fee || order.shipping_cost || 0 }} FCFA</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>{{ order.total }} FCFA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations de livraison et paiement -->
+      <div class="info-sidebar">
+        <!-- Date de commande -->
+        <div class="info-card">
+          <h3>📅 Date de commande</h3>
+          <p>{{ order.created_at | date:'dd/MM/yyyy à HH:mm' }}</p>
+        </div>
+
+        <!-- Adresse de livraison -->
+        <div class="info-card">
+          <h3>📍 Adresse de livraison</h3>
+          <div class="address-details" *ngIf="order.delivery_address || order.address">
+            <strong>{{ (order.delivery_address || order.address)?.full_name }}</strong><br>
+            {{ (order.delivery_address || order.address)?.phone }}<br>
+            {{ (order.delivery_address || order.address)?.street || (order.delivery_address || order.address)?.address_line1 }}<br>
+            <span *ngIf="(order.delivery_address || order.address)?.address_line2">
+              {{ (order.delivery_address || order.address)?.address_line2 }}<br>
+            </span>
+            {{ (order.delivery_address || order.address)?.city }}<span *ngIf="(order.delivery_address || order.address)?.postal_code">, {{ (order.delivery_address || order.address)?.postal_code }}</span><br>
+            {{ (order.delivery_address || order.address)?.country }}
+          </div>
+        </div>
+
+        <!-- Informations de paiement -->
+        <div class="info-card">
+          <h3>💳 Paiement</h3>
+          <div class="payment-details">
+            <div class="detail-row">
+              <span>Méthode:</span>
+              <span>{{ getPaymentMethodLabel(order.payment_method || '') }}</span>
+            </div>
+            <div class="detail-row">
+              <span>Statut:</span>
+              <span
+                [class.status-paid]="order.payment?.status === 'completed' || order.payment_status === 'paid'"
+                [class.status-pending]="order.payment?.status === 'pending' || order.payment_status === 'pending'"
+              >
+                {{ (order.payment?.status === 'completed' || order.payment_status === 'paid') ? 'Payé' : 'En attente' }}
+              </span>
+            </div>
+            <div class="detail-row" *ngIf="order.payment?.transaction_id">
+              <span>Transaction:</span>
+              <span class="transaction-id">{{ order.payment.transaction_id }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="info-card" *ngIf="order.notes">
+          <h3>📝 Notes</h3>
+          <p class="notes-text">{{ order.notes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="order-actions">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="cancelOrder()"
+        *ngIf="canCancelOrder()"
+        [disabled]="cancelling"
+      >
+        {{ cancelling ? 'Annulation...' : 'Annuler la commande' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Retour aux commandes
+      </button>
+    </div>
+  </div>
+</div>
