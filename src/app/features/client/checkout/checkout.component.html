@@ -1,0 +1,278 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <button type="button" class="btn-back" (click)="goBack()">
+      ← Retour au panier
+    </button>
+    <h1>Finaliser la commande</h1>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>{{ error }}</p>
+    <button type="button" class="btn btn-primary" (click)="loadData()" *ngIf="isEmpty">
+      Aller aux produits
+    </button>
+  </div>
+
+  <!-- Formulaire de commande -->
+  <div *ngIf="!isEmpty && !loading && !error" class="checkout-content">
+    <!-- Colonne principale -->
+    <div class="checkout-main">
+      <!-- Section Adresse de livraison -->
+      <div class="checkout-section">
+        <div class="section-header">
+          <h2>📍 Adresse de livraison</h2>
+          <button type="button" class="btn-add" (click)="toggleAddressForm()" *ngIf="!showAddressForm">
+            + Nouvelle adresse
+          </button>
+        </div>
+
+        <!-- Liste des adresses -->
+        <div class="addresses-list" *ngIf="!showAddressForm">
+          <div *ngIf="addresses.length === 0" class="no-addresses">
+            <p>Vous n'avez pas encore d'adresse de livraison.</p>
+            <button type="button" class="btn btn-primary" (click)="toggleAddressForm()">
+              Ajouter une adresse
+            </button>
+          </div>
+
+          <div
+            *ngFor="let address of addresses"
+            class="address-card"
+            [class.selected]="selectedAddressId === address.id"
+            (click)="selectedAddressId = address.id"
+          >
+            <div class="address-radio">
+              <input
+                type="radio"
+                [checked]="selectedAddressId === address.id"
+                [value]="address.id"
+              />
+            </div>
+            <div class="address-details">
+              <div class="address-name">{{ address.full_name }}</div>
+              <div class="address-phone">{{ address.phone }}</div>
+              <div class="address-text">
+                {{ address.address_line1 }}
+                <span *ngIf="address.address_line2">, {{ address.address_line2 }}</span>
+              </div>
+              <div class="address-location">
+                {{ address.city }}<span *ngIf="address.region">, {{ address.region }}</span>
+                <span *ngIf="address.postal_code"> - {{ address.postal_code }}</span>
+              </div>
+              <div class="address-country">{{ address.country }}</div>
+              <span class="badge-default" *ngIf="address.is_default">Par défaut</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire nouvelle adresse -->
+        <div class="address-form" *ngIf="showAddressForm">
+          <div class="form-group">
+            <label>Nom complet *</label>
+            <input
+              type="text"
+              [(ngModel)]="newAddress.full_name"
+              placeholder="Prénom et nom"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Téléphone *</label>
+            <input
+              type="tel"
+              [(ngModel)]="newAddress.phone"
+              placeholder="+221 XX XXX XX XX"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Adresse *</label>
+            <input
+              type="text"
+              [(ngModel)]="newAddress.address_line1"
+              placeholder="Rue, numéro"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Complément d'adresse</label>
+            <input
+              type="text"
+              [(ngModel)]="newAddress.address_line2"
+              placeholder="Appartement, étage, bâtiment..."
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ville *</label>
+              <input
+                type="text"
+                [(ngModel)]="newAddress.city"
+                placeholder="Dakar"
+                class="form-control"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Région</label>
+              <input
+                type="text"
+                [(ngModel)]="newAddress.region"
+                placeholder="Région"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Code postal</label>
+              <input
+                type="text"
+                [(ngModel)]="newAddress.postal_code"
+                placeholder="Code postal"
+                class="form-control"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Pays *</label>
+              <input
+                type="text"
+                [(ngModel)]="newAddress.country"
+                placeholder="Sénégal"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="toggleAddressForm()"
+              [disabled]="submitting"
+            >
+              Annuler
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="saveNewAddress()"
+              [disabled]="!isNewAddressValid() || submitting"
+            >
+              {{ submitting ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Mode de paiement -->
+      <div class="checkout-section">
+        <div class="section-header">
+          <h2>💳 Mode de paiement</h2>
+        </div>
+
+        <div class="payment-methods">
+          <div
+            *ngFor="let method of paymentMethods"
+            class="payment-method"
+            [class.selected]="selectedPaymentMethod === method.value"
+            (click)="selectPaymentMethod(method.value)"
+          >
+            <div class="payment-radio">
+              <input
+                type="radio"
+                [checked]="selectedPaymentMethod === method.value"
+                [value]="method.value"
+              />
+            </div>
+            <div class="payment-icon">{{ method.icon }}</div>
+            <div class="payment-label">{{ method.label }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Notes -->
+      <div class="checkout-section">
+        <div class="section-header">
+          <h2>📝 Notes (optionnel)</h2>
+        </div>
+
+        <div class="notes-section">
+          <textarea
+            [(ngModel)]="notes"
+            placeholder="Instructions de livraison, commentaires..."
+            rows="4"
+            class="form-control"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résumé de commande (sidebar) -->
+    <div class="checkout-summary">
+      <h2>Résumé</h2>
+
+      <div class="summary-items">
+        <div class="summary-item-header">
+          <span>Articles ({{ totalItems }})</span>
+        </div>
+        <div *ngFor="let item of cart?.items" class="summary-item">
+          <img
+            [src]="item.product.images && item.product.images[0] || 'assets/images/placeholder.jpg'"
+            [alt]="item.product.name"
+            class="item-image"
+          />
+          <div class="item-info">
+            <div class="item-name">{{ item.product.name }}</div>
+            <div class="item-quantity">Qté: {{ item.quantity }}</div>
+          </div>
+          <div class="item-price">{{ item.subtotal }} FCFA</div>
+        </div>
+      </div>
+
+      <div class="summary-details">
+        <div class="summary-row">
+          <span>Sous-total:</span>
+          <span class="value">{{ subtotal }} FCFA</span>
+        </div>
+        <div class="summary-row">
+          <span>Livraison:</span>
+          <span class="value">{{ shippingCost > 0 ? shippingCost + ' FCFA' : 'Gratuite' }}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row total">
+          <span>Total:</span>
+          <span class="value">{{ total }} FCFA</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary btn-place-order"
+        (click)="placeOrder()"
+        [disabled]="!canPlaceOrder"
+      >
+        {{ submitting ? 'Traitement...' : 'Passer la commande' }}
+      </button>
+
+      <div class="security-notice">
+        <span class="icon">🔒</span>
+        <span>Paiement sécurisé</span>
+      </div>
+    </div>
+  </div>
+</div>
