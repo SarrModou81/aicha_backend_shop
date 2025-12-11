@@ -21,45 +21,6 @@
 
         <!-- Statistics Content -->
         <div *ngIf="!loading && !error">
-          <!-- Key Metrics -->
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon">📦</div>
-              <div class="metric-content">
-                <h3>{{ stats.totalProducts }}</h3>
-                <p>Total Produits</p>
-                <span class="metric-detail">{{ stats.activeProducts }} actifs ({{ getProductPerformanceRate() | number:'1.0-0' }}%)</span>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon">🛒</div>
-              <div class="metric-content">
-                <h3>{{ stats.totalOrders }}</h3>
-                <p>Commandes</p>
-                <span class="metric-detail">{{ stats.confirmedOrders }} confirmées</span>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon">💰</div>
-              <div class="metric-content">
-                <h3>{{ stats.totalRevenue | number:'1.0-0' }} FCFA</h3>
-                <p>Revenu Total</p>
-                <span class="metric-detail">Commandes livrées</span>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon">📈</div>
-              <div class="metric-content">
-                <h3>{{ getAverageOrderValue() | number:'1.0-0' }} FCFA</h3>
-                <p>Panier Moyen</p>
-                <span class="metric-detail">Par commande</span>
-              </div>
-            </div>
-          </div>
-
           <!-- Sales Charts -->
           <div class="charts-section">
             <div class="chart-card revenue-chart">

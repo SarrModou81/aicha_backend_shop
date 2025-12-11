@@ -13,7 +13,7 @@
 
     h1 {
       font-size: 2rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -41,14 +41,14 @@
         font-size: 0.95rem;
 
         &.active {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
 
         &:hover:not(.active) {
-          background: #f8f9fa;
-          color: #667eea;
+          background: #f0fdf4;
+          color: #10b981;
         }
       }
     }
@@ -69,7 +69,7 @@
       width: 60px;
       height: 60px;
       border: 5px solid #f3f4f6;
-      border-top-color: #667eea;
+      border-top-color: #10b981;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -104,19 +104,19 @@
     .btn-retry {
       margin-top: 1rem;
       padding: 0.75rem 2rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
       font-size: 1rem;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
       transition: all 0.3s;
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
       }
     }
   }
@@ -150,23 +150,23 @@
       &:hover {
         transform: translateY(-5px);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-        border-color: rgba(102, 126, 234, 0.3);
+        border-color: rgba(16, 185, 129, 0.3);
       }
 
       &:nth-child(1) .metric-icon {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       }
 
       &:nth-child(2) .metric-icon {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
       }
 
       &:nth-child(3) .metric-icon {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        background: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
       }
 
       &:nth-child(4) .metric-icon {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
       }
 
       .metric-icon {
@@ -227,7 +227,7 @@
       transition: all 0.3s;
 
       &:hover {
-        border-color: rgba(102, 126, 234, 0.2);
+        border-color: rgba(16, 185, 129, 0.2);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       }
 
@@ -421,8 +421,8 @@
               border-bottom: 1px solid #f7fafc;
 
               &:hover {
-                background: linear-gradient(90deg, #f7fafc 0%, transparent 100%);
-                box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.1);
+                background: linear-gradient(90deg, #f0fdf4 0%, transparent 100%);
+                box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.1);
               }
 
               td {
@@ -469,7 +469,7 @@
                 }
 
                 &.sales-count {
-                  color: #667eea;
+                  color: #10b981;
                   font-weight: 700;
                 }
 
@@ -498,10 +498,10 @@
 
                     .performance-bar {
                       height: 100%;
-                      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
                       border-radius: 18px;
                       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+                      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
                     }
 
                     .performance-percent {
@@ -582,8 +582,8 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
         &:hover {
-          border-color: #667eea;
-          box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+          border-color: #10b981;
+          box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
           transform: translateY(-5px);
         }
 
@@ -598,7 +598,7 @@
 
         .kpi-value {
           font-size: 2.5rem;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
