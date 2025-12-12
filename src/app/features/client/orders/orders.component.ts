@@ -135,7 +135,7 @@ export class OrdersComponent implements OnInit {
       return (order as any).can_be_cancelled;
     }
 
-    // Fallback
-    return ['pending', 'confirmed'].includes(order.status);
+    // Fallback - peut annuler tant que pas livrée ou déjà annulée
+    return !['delivered', 'cancelled'].includes(order.status);
   }
 }
