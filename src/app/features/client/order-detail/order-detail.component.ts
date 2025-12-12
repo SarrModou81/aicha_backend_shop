@@ -40,13 +40,23 @@ export class OrderDetailComponent implements OnInit {
     this.error = null;
 
     this.orderService.getOrder(orderId).subscribe({
-      next: (order) => {
-        this.order = order;
+      next: (response: any) => {
+        // L'API peut retourner directement l'order ou un objet avec une propriété order
+        this.order = response.order || response;
         this.loading = false;
       },
       error: (error) => {
         console.error('Erreur lors du chargement de la commande:', error);
-        this.error = 'Impossible de charger les détails de la commande.';
+        
+        if (error.status === 404) {
+          this.error = 'Commande introuvable.';
+        } else if (error.status === 403) {
+          this.error = 'Vous n\'avez pas accès à cette commande.';
+          setTimeout(() => this.router.navigate(['/orders']), 2000);
+        } else {
+          this.error = 'Impossible de charger les détails de la commande.';
+        }
+        
         this.loading = false;
       }
     });
@@ -73,7 +83,7 @@ export class OrderDetailComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors de l\'annulation:', error);
-        alert('Impossible d\'annuler la commande. Elle est peut-être déjà expédiée.');
+        alert('Impossible d\'annuler la commande. ' + (error.error?.message || 'Elle est peut-être déjà expédiée.'));
         this.cancelling = false;
       }
     });
@@ -84,6 +94,21 @@ export class OrderDetailComponent implements OnInit {
   }
 
   getStatusBadgeClass(status: string): string {
+    // Utiliser status_color du backend si disponible
+    if ((this.order as any)?.status_color) {
+      const colorMap: { [key: string]: string } = {
+        'warning': 'badge-warning',
+        'info': 'badge-info',
+        'purple': 'badge-purple',
+        'primary': 'badge-primary',
+        'secondary': 'badge-secondary',
+        'success': 'badge-success',
+        'danger': 'badge-danger'
+      };
+      return colorMap[(this.order as any).status_color] || 'badge-default';
+    }
+
+    // Fallback
     const statusClasses: { [key: string]: string } = {
       'pending': 'badge-warning',
       'confirmed': 'badge-info',
@@ -96,6 +121,12 @@ export class OrderDetailComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
+    // Utiliser status_label du backend si disponible
+    if ((this.order as any)?.status_label) {
+      return (this.order as any).status_label;
+    }
+
+    // Fallback
     const statusLabels: { [key: string]: string } = {
       'pending': 'En attente',
       'confirmed': 'Confirmée',
@@ -109,6 +140,7 @@ export class OrderDetailComponent implements OnInit {
 
   getPaymentMethodLabel(method: string): string {
     const labels: { [key: string]: string } = {
+      'cash_on_delivery': 'Paiement à la livraison',
       'cash': 'Paiement à la livraison',
       'card': 'Carte bancaire',
       'wave': 'Wave',
@@ -119,7 +151,15 @@ export class OrderDetailComponent implements OnInit {
   }
 
   canCancelOrder(): boolean {
-    return this.order ? ['pending', 'confirmed'].includes(this.order.status) : false;
+    if (!this.order) return false;
+
+    // Utiliser can_be_cancelled du backend si disponible
+    if ((this.order as any).hasOwnProperty('can_be_cancelled')) {
+      return (this.order as any).can_be_cancelled;
+    }
+
+    // Fallback
+    return ['pending', 'confirmed'].includes(this.order.status);
   }
 
   isStatusCompleted(statusKey: string): boolean {

@@ -39,7 +39,7 @@ export class OrdersComponent implements OnInit {
 
     this.orderService.getOrders().subscribe({
       next: (response) => {
-        this.orders = response.orders || response;
+        this.orders = response.data || response.orders || response;
         this.loading = false;
       },
       error: (error) => {
@@ -79,12 +79,27 @@ export class OrdersComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors de l\'annulation:', error);
-        alert('Impossible d\'annuler la commande. Elle est peut-être déjà expédiée.');
+        alert('Impossible d\'annuler la commande. ' + (error.error?.message || 'Elle est peut-être déjà expédiée.'));
       }
     });
   }
 
-  getStatusBadgeClass(status: string): string {
+  getStatusBadgeClass(status: string, order?: any): string {
+    // Utiliser status_color du backend si disponible
+    if (order?.status_color) {
+      const colorMap: { [key: string]: string } = {
+        'warning': 'badge-warning',
+        'info': 'badge-info',
+        'purple': 'badge-purple',
+        'primary': 'badge-primary',
+        'secondary': 'badge-secondary',
+        'success': 'badge-success',
+        'danger': 'badge-danger'
+      };
+      return colorMap[order.status_color] || 'badge-default';
+    }
+
+    // Fallback
     const statusClasses: { [key: string]: string } = {
       'pending': 'badge-warning',
       'confirmed': 'badge-info',
@@ -96,7 +111,13 @@ export class OrdersComponent implements OnInit {
     return statusClasses[status] || 'badge-default';
   }
 
-  getStatusLabel(status: string): string {
+  getStatusLabel(status: string, order?: any): string {
+    // Utiliser status_label du backend si disponible
+    if (order?.status_label) {
+      return order.status_label;
+    }
+
+    // Fallback
     const statusLabels: { [key: string]: string } = {
       'pending': 'En attente',
       'confirmed': 'Confirmée',
@@ -109,6 +130,12 @@ export class OrdersComponent implements OnInit {
   }
 
   canCancelOrder(order: Order): boolean {
+    // Utiliser can_be_cancelled du backend si disponible
+    if (order.hasOwnProperty('can_be_cancelled')) {
+      return (order as any).can_be_cancelled;
+    }
+
+    // Fallback
     return ['pending', 'confirmed'].includes(order.status);
   }
 }
