@@ -97,20 +97,46 @@ export class AdminStatisticsComponent implements OnInit {
 
     this.adminService.getSalesByMonth(this.currentYear).subscribe({
       next: (data) => {
-        this.salesByMonth = data || [];
+        console.log('Sales data received:', data);
+        if (Array.isArray(data) && data.length > 0) {
+          this.salesByMonth = data;
+        } else {
+          // Générer les 12 mois avec des valeurs à 0 par défaut
+          this.salesByMonth = this.generateEmptyMonths();
+        }
+        console.log('salesByMonth:', this.salesByMonth);
         this.loading = false;
       },
       error: (e) => {
         console.error('Erreur ventes:', e);
+        // En cas d'erreur, générer quand même les 12 mois vides
+        this.salesByMonth = this.generateEmptyMonths();
         this.loading = false;
       }
     });
 
     this.adminService.getTopProducts(10).subscribe({
       next: (data) => {
-        this.topProducts = data || [];
+        console.log('Top products received:', data);
+        this.topProducts = Array.isArray(data) ? data : [];
+      },
+      error: (e) => {
+        console.error('Erreur top products:', e);
+        this.topProducts = [];
       }
     });
+  }
+
+  generateEmptyMonths(): any[] {
+    const months = [];
+    for (let i = 1; i <= 12; i++) {
+      months.push({
+        month: i,
+        total_orders: 0,
+        total_revenue: 0
+      });
+    }
+    return months;
   }
 
   getBarHeight(value: number): number {

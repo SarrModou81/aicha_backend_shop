@@ -87,19 +87,38 @@ export class SellerDashboardComponent implements OnInit {
   loadSalesChart(): void {
     this.sellerService.getSalesByMonth().subscribe({
       next: (sales) => {
-        this.salesByMonth = sales;
-        this.prepareSalesChart(sales);
+        console.log('Seller sales data received:', sales);
+        if (Array.isArray(sales) && sales.length > 0) {
+          this.salesByMonth = sales;
+        } else {
+          this.salesByMonth = this.generateEmptyMonths();
+        }
+        this.prepareSalesChart(this.salesByMonth);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des ventes:', error);
+        this.salesByMonth = this.generateEmptyMonths();
+        this.prepareSalesChart(this.salesByMonth);
       }
     });
+  }
+
+  generateEmptyMonths(): any[] {
+    const months = [];
+    for (let i = 1; i <= 12; i++) {
+      months.push({
+        month: i,
+        total_orders: 0,
+        total_revenue: 0
+      });
+    }
+    return months;
   }
 
   prepareSalesChart(sales: any[]): void {
     const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
     const labels = sales.map(s => monthNames[s.month - 1]);
-    const revenue = sales.map(s => s.total_revenue);
+    const revenue = sales.map(s => s.total_revenue || 0);
 
     this.chartData = {
       labels,
