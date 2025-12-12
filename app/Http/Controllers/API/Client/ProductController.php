@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -173,8 +174,10 @@ class ProductController extends Controller
         $products = Product::with(['category', 'seller'])
             ->active()
             ->inStock()
-            ->withCount('orderItems')
-            ->orderBy('order_items_count', 'desc')
+            ->withCount(['orderItems as total_sold' => function ($query) {
+                $query->select(DB::raw('SUM(quantity)'));
+            }])
+            ->orderBy('total_sold', 'desc')
             ->paginate($request->get('per_page', 15));
 
         return response()->json($products);
