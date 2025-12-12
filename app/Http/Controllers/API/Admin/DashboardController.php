@@ -56,6 +56,20 @@ class DashboardController extends Controller
         try {
             $year = $request->input('year', date('Y'));
 
+            // DEBUG: Log des informations sur les commandes
+            $totalOrders = DB::table('orders')->count();
+            $ordersNotCancelled = DB::table('orders')->where('status', '!=', 'cancelled')->count();
+            $ordersThisYear = DB::table('orders')
+                ->where('status', '!=', 'cancelled')
+                ->whereYear('created_at', $year)
+                ->count();
+            $orders2024 = DB::table('orders')
+                ->where('status', '!=', 'cancelled')
+                ->whereYear('created_at', 2024)
+                ->count();
+
+            \Log::info("DEBUG salesByMonth - Total orders: $totalOrders, Not cancelled: $ordersNotCancelled, Year $year: $ordersThisYear, Year 2024: $orders2024");
+
             // Récupérer les ventes par mois (toutes les commandes sauf annulées)
             $salesData = DB::table('orders')
                 ->where('status', '!=', 'cancelled')
