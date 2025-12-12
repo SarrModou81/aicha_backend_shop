@@ -12,11 +12,15 @@ import { AdminService } from '../../../core/services/admin.service';
       <!-- Ventes par mois -->
       <div class="chart-section">
         <h2>Ventes par Mois ({{currentYear}})</h2>
-        <div class="chart-container">
+        <div class="chart-container" *ngIf="salesByMonth.length > 0">
           <div class="chart-bars">
             <div *ngFor="let sale of salesByMonth" class="chart-bar-wrapper">
-              <div class="chart-bar" [style.height.%]="getBarHeight(sale.total_revenue)">
-                <span class="bar-value">{{sale.total_revenue | number:'1.0-0'}}</span>
+              <div class="chart-bar"
+                   [style.height.%]="getBarHeight(sale.total_revenue)"
+                   [class.empty-bar]="!sale.total_revenue">
+                <span class="bar-value" *ngIf="sale.total_revenue > 0">
+                  {{sale.total_revenue | number:'1.0-0'}}
+                </span>
               </div>
               <span class="bar-label">{{getMonthName(sale.month)}}</span>
             </div>
@@ -66,6 +70,7 @@ import { AdminService } from '../../../core/services/admin.service';
     .chart-bars { display: flex; justify-content: space-between; align-items: flex-end; height: 300px; gap: 0.5rem; }
     .chart-bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; }
     .chart-bar { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 4px 4px 0 0; position: relative; min-height: 20px; }
+    .chart-bar.empty-bar { background: #e0e0e0; min-height: 5px; opacity: 0.5; }
     .bar-value { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
     .bar-label { margin-top: 0.5rem; font-size: 0.75rem; color: #7f8c8d; }
     .top-products { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }

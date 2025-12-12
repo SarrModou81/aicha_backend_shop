@@ -142,8 +142,12 @@
             <div class="chart-container">
               <div class="chart-bars">
                 <div *ngFor="let sale of salesByMonth" class="chart-bar-wrapper">
-                  <div class="chart-bar" [style.height.%]="(sale.total_revenue / getMaxRevenue()) * 100">
-                    <span class="bar-value">{{ sale.total_revenue | number:'1.0-0' }}</span>
+                  <div class="chart-bar"
+                       [style.height.%]="(sale.total_revenue / getMaxRevenue()) * 100"
+                       [class.empty-bar]="!sale.total_revenue">
+                    <span class="bar-value" *ngIf="sale.total_revenue > 0">
+                      {{ sale.total_revenue | number:'1.0-0' }}
+                    </span>
                   </div>
                   <span class="bar-label">{{ getMonthName(sale.month) }}</span>
                 </div>
