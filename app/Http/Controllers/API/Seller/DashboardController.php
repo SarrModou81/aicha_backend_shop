@@ -76,7 +76,8 @@ class DashboardController extends Controller
         $year = $request->input('year', date('Y'));
         $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
 
-        $sales = DB::table('order_items')
+        // Récupérer les ventes par mois
+        $salesData = DB::table('order_items')
             ->whereIn('product_id', $sellerProducts)
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.status', 'delivered')
@@ -87,10 +88,20 @@ class DashboardController extends Controller
                 DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue')
             )
             ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+            ->get()
+            ->keyBy('month');
 
-        return response()->json($sales);
+        // Créer un tableau avec tous les mois (1-12)
+        $allMonths = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $allMonths[] = [
+                'month' => $month,
+                'total_orders' => $salesData->has($month) ? (int) $salesData[$month]->total_orders : 0,
+                'total_revenue' => $salesData->has($month) ? (float) $salesData[$month]->total_revenue : 0,
+            ];
+        }
+
+        return response()->json($allMonths);
     }
 
     /**
