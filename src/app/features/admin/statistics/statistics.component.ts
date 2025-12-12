@@ -35,8 +35,8 @@ import { AdminService } from '../../../core/services/admin.service';
         <div class="chart-container">
           <div class="chart-bars">
             <div *ngFor="let sale of salesByMonth" class="chart-bar-wrapper">
-              <div class="chart-bar" [style.height.%]="getBarHeight(sale.total)">
-                <span class="bar-value">{{sale.total | number:'1.0-0'}}</span>
+              <div class="chart-bar" [style.height.%]="getBarHeight(sale.total_revenue)">
+                <span class="bar-value">{{sale.total_revenue | number:'1.0-0'}}</span>
               </div>
               <span class="bar-label">{{getMonthName(sale.month)}}</span>
             </div>
@@ -53,18 +53,21 @@ import { AdminService } from '../../../core/services/admin.service';
               <th>Produit</th>
               <th>Vendeur</th>
               <th>Ventes</th>
-              <th>Revenu</th>
+              <th>Revenu Estimé</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let product of topProducts">
               <td>{{product.name}}</td>
-              <td>{{product.seller?.name || 'N/A'}}</td>
-              <td>{{product.total_sold || 0}}</td>
-              <td>{{product.total_revenue | number:'1.0-0'}} FCFA</td>
+              <td>{{product.seller?.name || product.seller?.shop_name || 'N/A'}}</td>
+              <td>{{product.total_sold || 0}} unités</td>
+              <td>{{(product.total_sold || 0) * (product.discount_price || product.price || 0) | number:'1.0-0'}} FCFA</td>
             </tr>
           </tbody>
         </table>
+        <div *ngIf="topProducts.length === 0" style="text-align:center; padding: 2rem; color: #7f8c8d;">
+          Aucune donnée de vente disponible
+        </div>
       </div>
     </div>
   `,
@@ -128,9 +131,9 @@ export class AdminStatisticsComponent implements OnInit {
   }
 
   getBarHeight(value: number): number {
-    if (this.salesByMonth.length === 0) return 0;
-    const max = Math.max(...this.salesByMonth.map(s => s.total));
-    return (value / max) * 100;
+    if (this.salesByMonth.length === 0 || !value) return 0;
+    const max = Math.max(...this.salesByMonth.map(s => s.total_revenue || 0));
+    return max > 0 ? (value / max) * 100 : 0;
   }
 
   getMonthName(month: number): string {
