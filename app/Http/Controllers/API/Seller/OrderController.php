@@ -16,19 +16,28 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $status = $request->get('status');
+        $sellerId = $request->user()->id;
 
-        $query = OrderItem::where('seller_id', $request->user()->id)
-            ->with(['order.user', 'order.address', 'product']);
+        // Récupérer les commandes qui contiennent des articles du vendeur
+        $query = Order::whereHas('items', function ($q) use ($sellerId) {
+            $q->where('seller_id', $sellerId);
+        })->with(['user', 'address', 'items' => function ($q) use ($sellerId) {
+            $q->where('seller_id', $sellerId)->with('product');
+        }, 'payment']);
 
         if ($status) {
-            $query->whereHas('order', function ($q) use ($status) {
-                $q->where('status', $status);
-            });
+            $query->where('status', $status);
         }
 
-        $orderItems = $query->latest()->paginate(15);
+        $orders = $query->latest()->paginate(15);
 
-        return response()->json($orderItems);
+        // Ajouter le nombre d'items pour chaque commande
+        $orders->getCollection()->transform(function ($order) {
+            $order->items_count = $order->items->count();
+            return $order;
+        });
+
+        return response()->json($orders);
     }
 
     /**
@@ -36,15 +45,25 @@ class OrderController extends Controller
      */
     public function newOrders(Request $request)
     {
-        $orderItems = OrderItem::where('seller_id', $request->user()->id)
-            ->whereHas('order', function ($query) {
-                $query->where('status', 'pending');
+        $sellerId = $request->user()->id;
+
+        $orders = Order::where('status', 'pending')
+            ->whereHas('items', function ($q) use ($sellerId) {
+                $q->where('seller_id', $sellerId);
             })
-            ->with(['order.user', 'order.address', 'product'])
+            ->with(['user', 'address', 'items' => function ($q) use ($sellerId) {
+                $q->where('seller_id', $sellerId)->with('product');
+            }, 'payment'])
             ->latest()
             ->paginate(15);
 
-        return response()->json($orderItems);
+        // Ajouter le nombre d'items pour chaque commande
+        $orders->getCollection()->transform(function ($order) {
+            $order->items_count = $order->items->count();
+            return $order;
+        });
+
+        return response()->json($orders);
     }
 
     /**
