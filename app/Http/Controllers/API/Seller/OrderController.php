@@ -71,8 +71,10 @@ class OrderController extends Controller
      */
     public function show(Request $request, $orderId)
     {
-        $order = Order::with(['items' => function ($query) use ($request) {
-            $query->where('seller_id', $request->user()->id);
+        $sellerId = $request->user()->id;
+
+        $order = Order::with(['items' => function ($query) use ($sellerId) {
+            $query->where('seller_id', $sellerId);
         }, 'items.product', 'user', 'address', 'payment'])
             ->findOrFail($orderId);
 
@@ -83,9 +85,64 @@ class OrderController extends Controller
             ], 403);
         }
 
+        // Calculer le sous-total du vendeur (uniquement ses articles)
+        $sellerSubtotal = $order->items->sum('subtotal');
+        $sellerItemsCount = $order->items->count();
+
+        // Déterminer les actions disponibles pour ce vendeur
+        $availableActions = $this->getAvailableActions($order);
+
         return response()->json([
             'order' => $order,
+            'seller_summary' => [
+                'items_count' => $sellerItemsCount,
+                'subtotal' => $sellerSubtotal,
+            ],
+            'available_actions' => $availableActions,
         ]);
+    }
+
+    /**
+     * Détermine les actions disponibles selon le statut de la commande
+     */
+    private function getAvailableActions(Order $order): array
+    {
+        $actions = [];
+
+        switch ($order->status) {
+            case 'pending':
+                $actions[] = [
+                    'name' => 'confirm',
+                    'label' => 'Confirmer la commande',
+                    'method' => 'POST',
+                    'endpoint' => "/api/v1/seller/orders/{$order->id}/confirm",
+                    'color' => 'success',
+                ];
+                break;
+
+            case 'confirmed':
+                $actions[] = [
+                    'name' => 'processing',
+                    'label' => 'Marquer en préparation',
+                    'method' => 'POST',
+                    'endpoint' => "/api/v1/seller/orders/{$order->id}/processing",
+                    'color' => 'info',
+                ];
+                break;
+
+            case 'processing':
+                $actions[] = [
+                    'name' => 'shipped',
+                    'label' => 'Marquer comme expédiée',
+                    'method' => 'POST',
+                    'endpoint' => "/api/v1/seller/orders/{$order->id}/shipped",
+                    'color' => 'primary',
+                    'requires_tracking' => true,
+                ];
+                break;
+        }
+
+        return $actions;
     }
 
     /**

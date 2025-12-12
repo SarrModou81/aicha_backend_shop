@@ -29,6 +29,13 @@ class Order extends Model
         'total' => 'decimal:2',
     ];
 
+    protected $appends = [
+        'status_label',
+        'status_color',
+        'can_be_cancelled',
+        'is_paid',
+    ];
+
     // Boot method to generate order number
 
     protected static function boot()
@@ -111,5 +118,45 @@ class Order extends Model
     public function isPaid(): bool
     {
         return $this->payment && $this->payment->status === 'completed';
+    }
+
+    // Accessors pour le frontend
+
+    public function getStatusLabelAttribute(): string
+    {
+        $labels = [
+            'pending' => 'En attente',
+            'confirmed' => 'Confirmée',
+            'processing' => 'En préparation',
+            'shipped' => 'Expédiée',
+            'delivered' => 'Livrée',
+            'cancelled' => 'Annulée',
+        ];
+
+        return $labels[$this->status] ?? $this->status;
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        $colors = [
+            'pending' => 'warning',      // Jaune
+            'confirmed' => 'info',       // Bleu
+            'processing' => 'purple',    // Violet
+            'shipped' => 'secondary',    // Gris
+            'delivered' => 'success',    // Vert
+            'cancelled' => 'danger',     // Rouge
+        ];
+
+        return $colors[$this->status] ?? 'secondary';
+    }
+
+    public function getCanBeCancelledAttribute(): bool
+    {
+        return $this->canBeCancelled();
+    }
+
+    public function getIsPaidAttribute(): bool
+    {
+        return $this->isPaid();
     }
 }
