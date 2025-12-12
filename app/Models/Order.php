@@ -112,7 +112,8 @@ class Order extends Model
 
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['pending', 'confirmed']);
+        // Le client peut annuler tant que la commande n'est pas livrée ou déjà annulée
+        return !in_array($this->status, ['delivered', 'cancelled']);
     }
 
     public function isPaid(): bool
