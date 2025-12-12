@@ -9,29 +9,9 @@ import { AdminService } from '../../../core/services/admin.service';
     <div *ngIf="loading" class="loading">Chargement...</div>
 
     <div *ngIf="!loading" class="stats-container">
-      <!-- KPIs -->
-      <div class="kpis-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Revenu Total</div>
-          <div class="kpi-value">{{stats.totalRevenue | number:'1.0-0'}} FCFA</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Commandes</div>
-          <div class="kpi-value">{{stats.totalOrders}}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Produits</div>
-          <div class="kpi-value">{{stats.totalProducts}}</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Utilisateurs</div>
-          <div class="kpi-value">{{stats.totalUsers}}</div>
-        </div>
-      </div>
-
       <!-- Ventes par mois -->
       <div class="chart-section">
-        <h2>Ventes par Mois (2024)</h2>
+        <h2>Ventes par Mois ({{currentYear}})</h2>
         <div class="chart-container">
           <div class="chart-bars">
             <div *ngFor="let sale of salesByMonth" class="chart-bar-wrapper">
@@ -41,6 +21,9 @@ import { AdminService } from '../../../core/services/admin.service';
               <span class="bar-label">{{getMonthName(sale.month)}}</span>
             </div>
           </div>
+        </div>
+        <div *ngIf="salesByMonth.length === 0" style="text-align:center; padding: 2rem; color: #7f8c8d;">
+          Aucune donnée de vente disponible
         </div>
       </div>
 
@@ -96,6 +79,7 @@ export class AdminStatisticsComponent implements OnInit {
   stats: any = {};
   salesByMonth: any[] = [];
   topProducts: any[] = [];
+  currentYear = new Date().getFullYear();
 
   constructor(private adminService: AdminService) {}
 
@@ -106,20 +90,14 @@ export class AdminStatisticsComponent implements OnInit {
   loadStatistics() {
     this.loading = true;
 
-    this.adminService.getDashboardStats().subscribe({
+    this.adminService.getSalesByMonth(this.currentYear).subscribe({
       next: (data) => {
-        this.stats = data;
+        this.salesByMonth = data || [];
         this.loading = false;
       },
       error: (e) => {
-        console.error('Erreur stats:', e);
+        console.error('Erreur ventes:', e);
         this.loading = false;
-      }
-    });
-
-    this.adminService.getSalesByMonth(2024).subscribe({
-      next: (data) => {
-        this.salesByMonth = data || [];
       }
     });
 
