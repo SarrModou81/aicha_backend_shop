@@ -72,36 +72,64 @@ class DashboardController extends Controller
      */
     public function salesByMonth(Request $request)
     {
-        $sellerId = $request->user()->id;
-        $year = $request->input('year', date('Y'));
-        $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
+        try {
+            $sellerId = $request->user()->id;
+            $year = $request->input('year', date('Y'));
+            $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
 
-        // Récupérer les ventes par mois
-        $salesData = DB::table('order_items')
-            ->whereIn('product_id', $sellerProducts)
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('orders.status', 'delivered')
-            ->whereYear('orders.created_at', $year)
-            ->select(
-                DB::raw('MONTH(orders.created_at) as month'),
-                DB::raw('COUNT(DISTINCT orders.id) as total_orders'),
-                DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue')
-            )
-            ->groupBy('month')
-            ->get()
-            ->keyBy('month');
+            // Si le vendeur n'a pas de produits, retourner 12 mois vides
+            if ($sellerProducts->isEmpty()) {
+                $allMonths = [];
+                for ($month = 1; $month <= 12; $month++) {
+                    $allMonths[] = [
+                        'month' => $month,
+                        'total_orders' => 0,
+                        'total_revenue' => 0,
+                    ];
+                }
+                return response()->json($allMonths);
+            }
 
-        // Créer un tableau avec tous les mois (1-12)
-        $allMonths = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $allMonths[] = [
-                'month' => $month,
-                'total_orders' => $salesData->has($month) ? (int) $salesData[$month]->total_orders : 0,
-                'total_revenue' => $salesData->has($month) ? (float) $salesData[$month]->total_revenue : 0,
-            ];
+            // Récupérer les ventes par mois
+            $salesData = DB::table('order_items')
+                ->whereIn('product_id', $sellerProducts->toArray())
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('orders.status', 'delivered')
+                ->whereYear('orders.created_at', $year)
+                ->select(
+                    DB::raw('MONTH(orders.created_at) as month'),
+                    DB::raw('COUNT(DISTINCT orders.id) as total_orders'),
+                    DB::raw('COALESCE(SUM(order_items.quantity * order_items.price), 0) as total_revenue')
+                )
+                ->groupBy(DB::raw('MONTH(orders.created_at)'))
+                ->get()
+                ->keyBy('month');
+
+            // Créer un tableau avec tous les mois (1-12)
+            $allMonths = [];
+            for ($month = 1; $month <= 12; $month++) {
+                $allMonths[] = [
+                    'month' => $month,
+                    'total_orders' => isset($salesData[$month]) ? (int) $salesData[$month]->total_orders : 0,
+                    'total_revenue' => isset($salesData[$month]) ? (float) $salesData[$month]->total_revenue : 0,
+                ];
+            }
+
+            return response()->json($allMonths);
+        } catch (\Exception $e) {
+            // En cas d'erreur, retourner 12 mois vides
+            $allMonths = [];
+            for ($month = 1; $month <= 12; $month++) {
+                $allMonths[] = [
+                    'month' => $month,
+                    'total_orders' => 0,
+                    'total_revenue' => 0,
+                ];
+            }
+
+            \Log::error('Erreur salesByMonth (Seller): ' . $e->getMessage());
+            return response()->json($allMonths);
         }
-
-        return response()->json($allMonths);
     }
 
     /**
