@@ -126,7 +126,52 @@ Après avoir exécuté les seeders :
 http://localhost:8000/api/v1
 ```
 
-Consultez le fichier pour la documentation complète des endpoints.
+### 📖 Endpoints disponibles
+
+#### 🛍️ Navigation Produits (Public)
+- `GET /products` - Liste des produits avec filtres et recherche
+- `GET /products/on-sale` - Produits en promotion
+- `GET /products/new-arrivals` - Nouveautés
+- `GET /products/popular` - Produits populaires
+- `GET /products/{id}` - Détails d'un produit
+- `GET /products/{id}/similar` - Produits similaires
+
+#### 🔐 Authentification
+- `POST /auth/register` - Inscription
+- `POST /auth/login` - Connexion
+- `POST /auth/logout` - Déconnexion
+- `GET /auth/me` - Profil utilisateur
+
+#### 🛒 Panier (Client)
+- `GET /client/cart` - Voir le panier
+- `POST /client/cart/add` - Ajouter au panier
+- `PUT /client/cart/items/{id}` - Modifier quantité
+- `DELETE /client/cart/items/{id}` - Retirer du panier
+
+#### 📦 Commandes (Client)
+- `GET /client/orders` - Mes commandes
+- `POST /client/orders` - Créer une commande
+- `GET /client/orders/{id}` - Détails commande
+- `POST /client/orders/{id}/cancel` - Annuler
+
+#### 🏪 Gestion Vendeur
+- `GET /seller/products` - Mes produits
+- `POST /seller/products` - Créer un produit
+- `GET /seller/orders` - Commandes reçues
+- `POST /seller/orders/{id}/confirm` - Confirmer
+- `POST /seller/orders/{id}/shipped` - Expédier
+
+#### 👨‍💼 Administration
+- `GET /admin/users` - Gestion utilisateurs
+- `GET /admin/sellers` - Gestion vendeurs
+- `POST /admin/sellers/{id}/approve` - Approuver vendeur
+- `GET /admin/products` - Modération produits
+- `POST /admin/products/{id}/approve` - Approuver produit
+- `GET /admin/orders` - Supervision commandes
+
+Pour la documentation complète avec exemples de requêtes et réponses, consultez **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)**.
+
+Pour le guide complet de gestion des commandes, consultez **[GUIDE_COMMANDES.md](./GUIDE_COMMANDES.md)**.
 
 ## 📄 Licence
 
