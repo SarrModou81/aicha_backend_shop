@@ -100,11 +100,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let order of recentOrders" (click)="viewOrder(order.order_id)" class="clickable">
-                      <td><strong>#{{ order.order_id }}</strong></td>
-                      <td>{{ order.order?.user?.name || 'Client' }}</td>
-                      <td>{{ order.subtotal | number:'1.0-0' }} FCFA</td>
-                      <td><span class="status" [ngClass]="getOrderStatusClass(order.order?.status)">{{ getOrderStatus(order.order?.status) }}</span></td>
+                    <tr *ngFor="let order of recentOrders" (click)="viewOrder(order.id)" class="clickable">
+                      <td><strong>#{{ order.id }}</strong></td>
+                      <td>{{ order.user?.name || 'Client' }}</td>
+                      <td>{{ order.total | number:'1.0-0' }} FCFA</td>
+                      <td><span class="status" [ngClass]="order.status_color || order.status">{{ order.status_label || getOrderStatus(order.status) }}</span></td>
                       <td>{{ formatDate(order.created_at) }}</td>
                     </tr>
                   </tbody>
