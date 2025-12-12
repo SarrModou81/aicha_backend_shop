@@ -56,9 +56,9 @@ class DashboardController extends Controller
         try {
             $year = $request->input('year', date('Y'));
 
-            // Récupérer les ventes par mois
+            // Récupérer les ventes par mois (toutes les commandes sauf annulées)
             $salesData = DB::table('orders')
-                ->where('status', 'delivered')
+                ->where('status', '!=', 'cancelled')
                 ->whereYear('created_at', $year)
                 ->select(
                     DB::raw('MONTH(created_at) as month'),

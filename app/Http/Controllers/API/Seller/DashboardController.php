@@ -90,11 +90,11 @@ class DashboardController extends Controller
                 return response()->json($allMonths);
             }
 
-            // Récupérer les ventes par mois
+            // Récupérer les ventes par mois (toutes les commandes sauf annulées)
             $salesData = DB::table('order_items')
                 ->whereIn('product_id', $sellerProducts->toArray())
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->where('orders.status', 'delivered')
+                ->where('orders.status', '!=', 'cancelled')
                 ->whereYear('orders.created_at', $year)
                 ->select(
                     DB::raw('MONTH(orders.created_at) as month'),
