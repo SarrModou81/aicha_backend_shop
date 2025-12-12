@@ -77,7 +77,7 @@ class OrderController extends Controller
      */
     public function markAsDelivered($id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with('payment')->findOrFail($id);
 
         if ($order->status !== 'shipped') {
             return response()->json([
@@ -87,11 +87,18 @@ class OrderController extends Controller
 
         $order->update(['status' => 'delivered']);
 
+        // Si le paiement est en cash et encore en pending, le marquer comme completed
+        if ($order->payment &&
+            $order->payment->payment_method === 'cash' &&
+            $order->payment->status === 'pending') {
+            $order->payment->markAsCompleted();
+        }
+
         // TODO: Envoyer une notification
 
         return response()->json([
             'message' => 'Commande marquée comme livrée.',
-            'order' => $order,
+            'order' => $order->fresh(['payment']),
         ]);
     }
 }

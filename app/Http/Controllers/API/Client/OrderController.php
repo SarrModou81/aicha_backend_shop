@@ -112,12 +112,18 @@ class OrderController extends Controller
             }
 
             // Créer le paiement
+            // Si c'est cash, le paiement reste en 'pending' jusqu'à la livraison
+            // Sinon, le paiement est marqué comme 'completed' car payé en ligne
+            $paymentStatus = $request->payment_method === 'cash' ? 'pending' : 'completed';
+            $paidAt = $request->payment_method === 'cash' ? null : now();
+
             $payment = Payment::create([
                 'order_id' => $order->id,
                 'user_id' => $user->id,
                 'payment_method' => $request->payment_method,
                 'amount' => $total,
-                'status' => 'pending',
+                'status' => $paymentStatus,
+                'paid_at' => $paidAt,
             ]);
 
             // Vider le panier
