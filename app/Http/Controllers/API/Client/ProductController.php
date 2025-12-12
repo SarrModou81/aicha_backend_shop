@@ -175,7 +175,7 @@ class ProductController extends Controller
             ->active()
             ->inStock()
             ->withCount(['orderItems as total_sold' => function ($query) {
-                $query->select(DB::raw('SUM(quantity)'));
+                $query->select(DB::raw('COALESCE(SUM(quantity), 0)'));
             }])
             ->orderBy('total_sold', 'desc')
             ->paginate($request->get('per_page', 15));

@@ -103,7 +103,7 @@ class DashboardController extends Controller
 
         $products = Product::where('user_id', $sellerId)
             ->withCount(['orderItems as total_sold' => function ($query) {
-                $query->select(DB::raw('SUM(quantity)'));
+                $query->select(DB::raw('COALESCE(SUM(quantity), 0)'));
             }])
             ->orderBy('total_sold', 'desc')
             ->take($limit)
