@@ -1,0 +1,187 @@
+<div class="order-detail-container">
+  <!-- Header -->
+  <div class="detail-header">
+    <button type="button" class="btn-back" (click)="goBack()">
+      ← Retour aux commandes
+    </button>
+    <div class="header-title" *ngIf="order">
+      <h1>Commande {{ order.order_number || '#' + order.id }}</h1>
+      <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+        {{ getStatusLabel(order.status) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="error && !loading" class="error-message">
+    <p>⚠️ {{ error }}</p>
+    <button type="button" class="btn btn-primary" (click)="goBack()">
+      Retour aux commandes
+    </button>
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!loading && !error && order" class="order-detail-content">
+    
+    <!-- Résumé vendeur -->
+    <div class="seller-summary-card" *ngIf="sellerSummary">
+      <h2>📊 Votre part de cette commande</h2>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-label">Nombre d'articles</div>
+          <div class="summary-value">{{ sellerSummary.items_count }}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Sous-total</div>
+          <div class="summary-value highlight">{{ sellerSummary.subtotal | number:'1.0-0' }} FCFA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions disponibles -->
+    <div class="actions-card" *ngIf="hasActions()">
+      <h3>⚡ Actions disponibles</h3>
+      <div class="actions-buttons">
+        <button
+          *ngFor="let action of availableActions"
+          type="button"
+          class="btn btn-action"
+          [class.btn-success]="action.color === 'success'"
+          [class.btn-info]="action.color === 'info'"
+          [class.btn-primary]="action.color === 'primary'"
+          (click)="executeAction(action)"
+          [disabled]="updating"
+        >
+          {{ action.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Informations principales -->
+    <div class="order-info-grid">
+      <!-- Articles commandés -->
+      <div class="info-card main-card">
+        <h2>📦 Articles de la commande</h2>
+        <div class="items-list">
+          <div *ngFor="let item of order.items" class="order-item">
+            <img
+              [src]="item.product?.images?.[0] || 'assets/images/placeholder.jpg'"
+              [alt]="item.product_name"
+              class="item-image"
+            />
+            <div class="item-details">
+              <div class="item-name">{{ item.product_name }}</div>
+              <div class="item-brand" *ngIf="item.product?.brand">
+                {{ item.product.brand }}
+              </div>
+              <div class="item-variants" *ngIf="item.size || item.color">
+                <span *ngIf="item.size" class="variant-badge">{{ item.size }}</span>
+                <span *ngIf="item.color" class="variant-badge">{{ item.color }}</span>
+              </div>
+              <div class="item-meta">
+                <span class="item-price">{{ item.price | number:'1.0-0' }} FCFA</span>
+                <span class="item-quantity">x {{ item.quantity }}</span>
+              </div>
+            </div>
+            <div class="item-subtotal">{{ item.subtotal | number:'1.0-0' }} FCFA</div>
+          </div>
+        </div>
+
+        <!-- Résumé financier global -->
+        <div class="order-summary">
+          <div class="summary-row">
+            <span>Sous-total:</span>
+            <span>{{ order.subtotal | number:'1.0-0' }} FCFA</span>
+          </div>
+          <div class="summary-row">
+            <span>Frais de livraison:</span>
+            <span>{{ order.shipping_cost || 0 | number:'1.0-0' }} FCFA</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total">
+            <span>Total commande:</span>
+            <span>{{ order.total | number:'1.0-0' }} FCFA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations complémentaires -->
+      <div class="info-sidebar">
+        <!-- Informations client -->
+        <div class="info-card">
+          <h3>👤 Client</h3>
+          <div class="client-info">
+            <p><strong>Nom:</strong> {{ order.user?.name || 'N/A' }}</p>
+            <p><strong>Email:</strong> {{ order.user?.email || 'N/A' }}</p>
+            <p *ngIf="order.user?.phone"><strong>Téléphone:</strong> {{ order.user.phone }}</p>
+          </div>
+        </div>
+
+        <!-- Date de commande -->
+        <div class="info-card">
+          <h3>📅 Date de commande</h3>
+          <p class="date-value">{{ order.created_at | date:'dd/MM/yyyy à HH:mm' }}</p>
+        </div>
+
+        <!-- Adresse de livraison -->
+        <div class="info-card">
+          <h3>📍 Adresse de livraison</h3>
+          <div class="address-details" *ngIf="order.address">
+            <p class="address-label">{{ order.address.label }}</p>
+            <p><strong>{{ order.address.full_name }}</strong></p>
+            <p>{{ order.address.phone }}</p>
+            <p>{{ order.address.address_line }}</p>
+            <p>{{ order.address.city }}<span *ngIf="order.address.postal_code">, {{ order.address.postal_code }}</span></p>
+            <p>{{ order.address.country }}</p>
+          </div>
+        </div>
+
+        <!-- Informations de paiement -->
+        <div class="info-card">
+          <h3>💳 Paiement</h3>
+          <div class="payment-details">
+            <div class="detail-row">
+              <span>Méthode:</span>
+              <span>{{ getPaymentMethodLabel(order.payment?.payment_method || '') }}</span>
+            </div>
+            <div class="detail-row">
+              <span>Statut:</span>
+              <span
+                class="payment-status"
+                [class.status-paid]="order.is_paid"
+                [class.status-pending]="!order.is_paid"
+              >
+                {{ order.is_paid ? '✓ Payé' : '⏳ En attente' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="info-card" *ngIf="order.notes">
+          <h3>📝 Notes de livraison</h3>
+          <p class="notes-text">{{ order.notes }}</p>
+        </div>
+
+        <!-- Numéro de suivi -->
+        <div class="info-card highlight-card" *ngIf="order.tracking_number">
+          <h3>🚚 Numéro de suivi</h3>
+          <p class="tracking-number">{{ order.tracking_number }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton retour bas de page -->
+    <div class="bottom-actions">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        ← Retour à la liste des commandes
+      </button>
+    </div>
+  </div>
+</div>

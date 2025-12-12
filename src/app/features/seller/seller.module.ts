@@ -9,6 +9,7 @@ import { SellerNavbarComponent } from './layout/navbar/navbar.component';
 import { SellerProductListComponent } from './products/product-list/product-list.component';
 import { SellerProductFormComponent } from './products/product-form/product-form.component';
 import { SellerOrdersListComponent } from './orders/orders-list/orders-list.component';
+import { SellerOrderDetailComponent } from './orders/order-detail/order-detail.component';
 import { SellerStockComponent } from './stock/stock.component';
 import { SellerProfileComponent } from './profile/profile.component';
 import { SellerSettingsComponent } from './settings/settings.component';
@@ -23,6 +24,7 @@ import { SellerStatisticsComponent } from './statistics/statistics.component';
     SellerProductListComponent,
     SellerProductFormComponent,
     SellerOrdersListComponent,
+    SellerOrderDetailComponent,
     SellerStockComponent,
     SellerProfileComponent,
     SellerSettingsComponent,
