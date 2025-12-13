@@ -86,25 +86,16 @@ export class SellerDashboardComponent implements OnInit {
   }
 
   loadSalesChart(): void {
-    this.sellerService.getSalesByMonth().subscribe({
+    this.sellerService.getSalesByDay(30).subscribe({
       next: (response) => {
-        console.log('Seller sales data received:', response);
-        // Handle new response structure: {year: number, data: array}
-        if (response && response.year && response.data) {
-          this.currentYear = response.year;
-          this.salesByMonth = response.data;
-        } else if (Array.isArray(response) && response.length > 0) {
-          // Fallback for old format (just in case)
-          this.salesByMonth = response;
-        } else {
-          this.salesByMonth = this.generateEmptyMonths();
-        }
+        console.log('Seller daily sales data received:', response);
+        this.salesByMonth = response.data || [];
         this.prepareSalesChart(this.salesByMonth);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des ventes:', error);
-        this.salesByMonth = this.generateEmptyMonths();
-        this.prepareSalesChart(this.salesByMonth);
+        this.salesByMonth = [];
+        this.prepareSalesChart([]);
       }
     });
   }
@@ -195,6 +186,11 @@ export class SellerDashboardComponent implements OnInit {
 
   getMaxRevenue(): number {
     if (this.salesByMonth.length === 0) return 1;
-    return Math.max(...this.salesByMonth.map(s => s.total_revenue));
+    return Math.max(...this.salesByMonth.map(s => s.total_revenue || 0));
+  }
+
+  formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
   }
 }

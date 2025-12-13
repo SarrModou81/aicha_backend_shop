@@ -28,6 +28,12 @@ export class AdminService {
     return this.http.get(url);
   }
 
+  getSalesByDay(days: number = 30): Observable<any> {
+    return this.http.get(`${this.API_URL}/dashboard/sales-by-day`, {
+      params: { days: days.toString() }
+    });
+  }
+
   getTopProducts(limit: number = 10): Observable<any> {
     return this.http.get(`${this.API_URL}/dashboard/top-products`, {
       params: { limit: limit.toString() }
