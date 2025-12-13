@@ -30,6 +30,19 @@ export class SellerStatisticsComponent implements OnInit {
   salesChartData: any;
   productPerformanceData: any;
 
+  // SVG Chart dimensions
+  chartWidth = 800;
+  chartHeight = 300;
+  chartPadding = 50;
+
+  // SVG Chart data
+  revenueLinePath = '';
+  revenueAreaPath = '';
+  revenuePoints: any[] = [];
+  gridLines: number[] = [];
+  yAxisLabels: any[] = [];
+  xAxisLabels: any[] = [];
+
   constructor(private sellerService: SellerService) {}
 
   ngOnInit(): void {
@@ -109,6 +122,62 @@ export class SellerStatisticsComponent implements OnInit {
       revenue: sales.map(s => s.total_revenue || 0),
       orders: sales.map(s => s.total_orders || 0)
     };
+
+    // Generate SVG chart for revenue evolution
+    this.generateRevenueChart(sales);
+  }
+
+  generateRevenueChart(sales: any[]): void {
+    if (sales.length === 0) return;
+
+    const maxRevenue = Math.max(...sales.map(s => s.total_revenue || 0), 1);
+    const chartInnerWidth = this.chartWidth - 2 * this.chartPadding;
+    const chartInnerHeight = this.chartHeight - 2 * this.chartPadding;
+
+    // Generate grid lines and Y-axis labels
+    this.gridLines = [];
+    this.yAxisLabels = [];
+    for (let i = 0; i <= 4; i++) {
+      const y = this.chartPadding + (chartInnerHeight / 4) * i;
+      this.gridLines.push(y);
+
+      const revenueValue = maxRevenue * (1 - i / 4);
+      this.yAxisLabels.push({ y: y + 5, value: revenueValue });
+    }
+
+    // Generate X-axis labels
+    this.xAxisLabels = [];
+    const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+    sales.forEach((sale, index) => {
+      const x = this.chartPadding + (index / (sales.length - 1 || 1)) * chartInnerWidth;
+      this.xAxisLabels.push({ x: x, value: monthNames[sale.month - 1] });
+    });
+
+    // Generate points and paths
+    this.revenuePoints = [];
+    const revenuePathPoints: string[] = [];
+    const areaPoints: string[] = [];
+
+    sales.forEach((sale, index) => {
+      const x = this.chartPadding + (index / (sales.length - 1 || 1)) * chartInnerWidth;
+      const yRevenue = this.chartHeight - this.chartPadding - ((sale.total_revenue || 0) / maxRevenue) * chartInnerHeight;
+
+      this.revenuePoints.push({ x, y: yRevenue, data: { revenue: sale.total_revenue || 0, month: sale.month } });
+
+      revenuePathPoints.push(`${index === 0 ? 'M' : 'L'} ${x} ${yRevenue}`);
+
+      if (index === 0) {
+        areaPoints.push(`M ${x} ${this.chartHeight - this.chartPadding}`);
+      }
+      areaPoints.push(`L ${x} ${yRevenue}`);
+    });
+
+    // Close area path
+    const lastX = this.chartPadding + chartInnerWidth;
+    areaPoints.push(`L ${lastX} ${this.chartHeight - this.chartPadding} Z`);
+
+    this.revenueLinePath = revenuePathPoints.join(' ');
+    this.revenueAreaPath = areaPoints.join(' ');
   }
 
   prepareProductPerformanceChart(products: any[]): void {

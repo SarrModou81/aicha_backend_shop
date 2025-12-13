@@ -30,23 +30,61 @@
                   <span class="legend-item revenue"><span class="color-box"></span> Revenu (FCFA)</span>
                 </div>
               </div>
-              <div class="chart-container" *ngIf="salesChartData">
-                <div class="dual-chart">
-                  <div class="chart-bars">
-                    <div *ngFor="let label of salesChartData.labels; let i = index" class="bar-group">
-                      <div class="bar-wrapper">
-                        <div class="bar revenue-bar"
-                             [style.height.%]="(salesChartData.revenue[i] / getMaxRevenue()) * 100"
-                             [title]="salesChartData.revenue[i] | number:'1.0-0'">
-                          <span class="bar-value" *ngIf="salesChartData.revenue[i] > 0">
-                            {{ salesChartData.revenue[i] | number:'1.0-0' }}
-                          </span>
-                        </div>
-                        <span class="bar-label">{{ label }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div class="chart-container" *ngIf="salesChartData && salesChartData.revenue.length > 0">
+                <svg class="line-chart" [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight">
+                  <!-- Grid lines -->
+                  <g class="grid">
+                    <line *ngFor="let line of gridLines"
+                          [attr.x1]="chartPadding"
+                          [attr.y1]="line"
+                          [attr.x2]="chartWidth - chartPadding"
+                          [attr.y2]="line"
+                          class="grid-line" />
+                  </g>
+
+                  <!-- Y-axis labels (revenue) -->
+                  <g class="y-axis">
+                    <text *ngFor="let label of yAxisLabels"
+                          [attr.x]="chartPadding - 5"
+                          [attr.y]="label.y"
+                          class="axis-label-y revenue-axis">
+                      {{label.value | number:'1.0-0'}}
+                    </text>
+                  </g>
+
+                  <!-- X-axis labels (months) -->
+                  <g class="x-axis">
+                    <text *ngFor="let label of xAxisLabels"
+                          [attr.x]="label.x"
+                          [attr.y]="chartHeight - 5"
+                          class="axis-label-x">
+                      {{label.value}}
+                    </text>
+                  </g>
+
+                  <!-- Revenue Area -->
+                  <path [attr.d]="revenueAreaPath" class="area-revenue" />
+
+                  <!-- Revenue Line -->
+                  <path [attr.d]="revenueLinePath" class="line-revenue" />
+
+                  <!-- Data points -->
+                  <circle *ngFor="let point of revenuePoints"
+                          [attr.cx]="point.x"
+                          [attr.cy]="point.y"
+                          r="4"
+                          class="point-revenue" />
+
+                  <!-- Revenue labels -->
+                  <ng-container *ngFor="let point of revenuePoints; let i = index">
+                    <text *ngIf="point.data.revenue > 0 && (i === 0 || i === revenuePoints.length - 1 || i % 2 === 0)"
+                          [attr.x]="point.x"
+                          [attr.y]="point.y - 10"
+                          class="point-label">
+                      {{point.data.revenue | number:'1.0-0'}}
+                    </text>
+                  </ng-container>
+                </svg>
               </div>
               <div class="chart-summary">
                 <div class="summary-item">
