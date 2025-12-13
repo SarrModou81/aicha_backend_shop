@@ -160,6 +160,77 @@ class DashboardController extends Controller
     }
 
     /**
+     * Obtenir les statistiques de ventes par jour du vendeur
+     */
+    public function salesByDay(Request $request)
+    {
+        try {
+            $sellerId = $request->user()->id;
+            $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
+
+            // Si le vendeur n'a pas de produits, retourner données vides
+            if ($sellerProducts->isEmpty()) {
+                return response()->json([
+                    'period' => 30,
+                    'start_date' => now()->subDays(29)->format('Y-m-d'),
+                    'end_date' => now()->format('Y-m-d'),
+                    'data' => []
+                ]);
+            }
+
+            // Récupérer les paramètres de période (par défaut: 30 derniers jours)
+            $days = $request->input('days', 30);
+            $endDate = now();
+            $startDate = now()->subDays($days - 1)->startOfDay();
+
+            // Récupérer les ventes par jour (toutes les commandes sauf annulées)
+            $salesData = DB::table('order_items')
+                ->whereIn('product_id', $sellerProducts->toArray())
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('orders.status', '!=', 'cancelled')
+                ->whereBetween('orders.created_at', [$startDate, $endDate])
+                ->select(
+                    DB::raw('DATE(orders.created_at) as date'),
+                    DB::raw('COUNT(DISTINCT orders.id) as total_orders'),
+                    DB::raw('COALESCE(SUM(order_items.quantity * order_items.price), 0) as total_revenue')
+                )
+                ->groupBy(DB::raw('DATE(orders.created_at)'))
+                ->orderBy('date')
+                ->get()
+                ->keyBy('date');
+
+            // Créer un tableau avec tous les jours de la période
+            $allDays = [];
+            $currentDate = $startDate->copy();
+
+            while ($currentDate <= $endDate) {
+                $dateStr = $currentDate->format('Y-m-d');
+                $allDays[] = [
+                    'date' => $dateStr,
+                    'total_orders' => isset($salesData[$dateStr]) ? (int) $salesData[$dateStr]->total_orders : 0,
+                    'total_revenue' => isset($salesData[$dateStr]) ? (float) $salesData[$dateStr]->total_revenue : 0,
+                ];
+                $currentDate->addDay();
+            }
+
+            return response()->json([
+                'period' => $days,
+                'start_date' => $startDate->format('Y-m-d'),
+                'end_date' => $endDate->format('Y-m-d'),
+                'data' => $allDays
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Erreur salesByDay (Seller): ' . $e->getMessage());
+            return response()->json([
+                'period' => 30,
+                'start_date' => now()->subDays(29)->format('Y-m-d'),
+                'end_date' => now()->format('Y-m-d'),
+                'data' => []
+            ], 500);
+        }
+    }
+
+    /**
      * Obtenir les produits les plus vendus du vendeur
      */
     public function topProducts(Request $request)

@@ -118,6 +118,62 @@ class DashboardController extends Controller
     }
 
     /**
+     * Obtenir les statistiques de ventes par jour
+     */
+    public function salesByDay(Request $request)
+    {
+        try {
+            // Récupérer les paramètres de période (par défaut: 30 derniers jours)
+            $days = $request->input('days', 30);
+            $endDate = now();
+            $startDate = now()->subDays($days - 1)->startOfDay();
+
+            // Récupérer les ventes par jour (toutes les commandes sauf annulées)
+            $salesData = DB::table('orders')
+                ->where('status', '!=', 'cancelled')
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->select(
+                    DB::raw('DATE(created_at) as date'),
+                    DB::raw('COUNT(*) as total_orders'),
+                    DB::raw('COALESCE(SUM(total), 0) as total_revenue')
+                )
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->orderBy('date')
+                ->get()
+                ->keyBy('date');
+
+            // Créer un tableau avec tous les jours de la période
+            $allDays = [];
+            $currentDate = $startDate->copy();
+
+            while ($currentDate <= $endDate) {
+                $dateStr = $currentDate->format('Y-m-d');
+                $allDays[] = [
+                    'date' => $dateStr,
+                    'total_orders' => isset($salesData[$dateStr]) ? (int) $salesData[$dateStr]->total_orders : 0,
+                    'total_revenue' => isset($salesData[$dateStr]) ? (float) $salesData[$dateStr]->total_revenue : 0,
+                ];
+                $currentDate->addDay();
+            }
+
+            return response()->json([
+                'period' => $days,
+                'start_date' => $startDate->format('Y-m-d'),
+                'end_date' => $endDate->format('Y-m-d'),
+                'data' => $allDays
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Erreur salesByDay: ' . $e->getMessage());
+            return response()->json([
+                'period' => 30,
+                'start_date' => now()->subDays(29)->format('Y-m-d'),
+                'end_date' => now()->format('Y-m-d'),
+                'data' => []
+            ], 500);
+        }
+    }
+
+    /**
      * Obtenir les produits les plus vendus
      */
     public function topProducts(Request $request)

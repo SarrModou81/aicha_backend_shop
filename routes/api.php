@@ -96,6 +96,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/dashboard/stats', [SellerDashboardController::class, 'stats']);
         Route::get('/dashboard/recent-orders', [SellerDashboardController::class, 'recentOrders']);
         Route::get('/dashboard/sales-by-month', [SellerDashboardController::class, 'salesByMonth']);
+        Route::get('/dashboard/sales-by-day', [SellerDashboardController::class, 'salesByDay']);
         Route::get('/dashboard/top-products', [SellerDashboardController::class, 'topProducts']);
 
         // Gestion des produits
@@ -137,6 +138,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats']);
         Route::get('/dashboard/recent-orders', [AdminDashboardController::class, 'recentOrders']);
         Route::get('/dashboard/sales-by-month', [AdminDashboardController::class, 'salesByMonth']);
+        Route::get('/dashboard/sales-by-day', [AdminDashboardController::class, 'salesByDay']);
         Route::get('/dashboard/top-products', [AdminDashboardController::class, 'topProducts']);
 
         // Gestion des utilisateurs
