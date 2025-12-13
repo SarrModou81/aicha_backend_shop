@@ -101,13 +101,16 @@ class DashboardController extends Controller
                     ->whereIn('product_id', $sellerProducts->toArray())
                     ->join('orders', 'order_items.order_id', '=', 'orders.id')
                     ->where('orders.status', '!=', 'cancelled')
+                    ->select('orders.created_at as order_date')
                     ->orderBy('orders.created_at', 'desc')
                     ->first();
 
-                if ($latestOrder) {
-                    $year = date('Y', strtotime($latestOrder->created_at));
+                if ($latestOrder && $latestOrder->order_date) {
+                    $year = date('Y', strtotime($latestOrder->order_date));
+                    \Log::info("Auto-detected year with sales: {$year}");
                 } else {
                     $year = date('Y');
+                    \Log::info("No sales found, using current year: {$year}");
                 }
             }
 
@@ -125,6 +128,12 @@ class DashboardController extends Controller
                 ->groupBy(DB::raw('MONTH(orders.created_at)'))
                 ->get()
                 ->keyBy('month');
+
+            \Log::info("Sales data for year {$year}: " . $salesData->count() . " months with sales", [
+                'seller_id' => $sellerId,
+                'year' => $year,
+                'months_with_data' => $salesData->keys()->toArray()
+            ]);
 
             // Créer un tableau avec tous les mois (1-12)
             $allMonths = [];
