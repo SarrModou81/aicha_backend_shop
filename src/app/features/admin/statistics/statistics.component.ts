@@ -47,13 +47,14 @@ import { AdminService } from '../../../core/services/admin.service';
                     (mouseleave)="hideTooltip()" />
 
             <!-- Revenue labels -->
-            <text *ngFor="let point of revenuePoints; let i = index"
-                  [attr.x]="point.x"
-                  [attr.y]="point.y - 10"
-                  class="point-label"
-                  *ngIf="point.data.total_revenue > 0 && (i === 0 || i === revenuePoints.length - 1 || i % 5 === 0)">
-              {{point.data.total_revenue | number:'1.0-0'}}
-            </text>
+            <ng-container *ngFor="let point of revenuePoints; let i = index">
+              <text *ngIf="point.data.total_revenue > 0 && (i === 0 || i === revenuePoints.length - 1 || i % 5 === 0)"
+                    [attr.x]="point.x"
+                    [attr.y]="point.y - 10"
+                    class="point-label">
+                {{point.data.total_revenue | number:'1.0-0'}}
+              </text>
+            </ng-container>
 
             <circle *ngFor="let point of ordersPoints"
                     [attr.cx]="point.x"
