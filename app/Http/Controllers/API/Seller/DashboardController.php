@@ -74,7 +74,6 @@ class DashboardController extends Controller
     {
         try {
             $sellerId = $request->user()->id;
-            $year = $request->input('year', date('Y'));
             $sellerProducts = Product::where('user_id', $sellerId)->pluck('id');
 
             // Si le vendeur n'a pas de produits, retourner 12 mois vides
@@ -87,7 +86,29 @@ class DashboardController extends Controller
                         'total_revenue' => 0,
                     ];
                 }
-                return response()->json($allMonths);
+                return response()->json([
+                    'year' => (int) date('Y'),
+                    'data' => $allMonths
+                ]);
+            }
+
+            // Si aucune année spécifiée, chercher l'année la plus récente avec des commandes
+            $year = $request->input('year');
+
+            if (!$year) {
+                // Trouver l'année la plus récente avec des commandes pour ce vendeur
+                $latestOrder = DB::table('order_items')
+                    ->whereIn('product_id', $sellerProducts->toArray())
+                    ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                    ->where('orders.status', '!=', 'cancelled')
+                    ->orderBy('orders.created_at', 'desc')
+                    ->first();
+
+                if ($latestOrder) {
+                    $year = date('Y', strtotime($latestOrder->created_at));
+                } else {
+                    $year = date('Y');
+                }
             }
 
             // Récupérer les ventes par mois (toutes les commandes sauf annulées)
@@ -115,7 +136,10 @@ class DashboardController extends Controller
                 ];
             }
 
-            return response()->json($allMonths);
+            return response()->json([
+                'year' => (int) $year,
+                'data' => $allMonths
+            ]);
         } catch (\Exception $e) {
             // En cas d'erreur, retourner 12 mois vides
             $allMonths = [];
@@ -128,7 +152,10 @@ class DashboardController extends Controller
             }
 
             \Log::error('Erreur salesByMonth (Seller): ' . $e->getMessage());
-            return response()->json($allMonths);
+            return response()->json([
+                'year' => (int) date('Y'),
+                'data' => $allMonths
+            ]);
         }
     }
 
