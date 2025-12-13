@@ -28,6 +28,26 @@ import { AdminService } from '../../../core/services/admin.service';
                     class="grid-line" />
             </g>
 
+            <!-- Y-axis labels (revenue) -->
+            <g class="y-axis">
+              <text *ngFor="let label of yAxisLabels"
+                    [attr.x]="chartPadding - 5"
+                    [attr.y]="label.y"
+                    class="axis-label-y">
+                {{label.value | number:'1.0-0'}}
+              </text>
+            </g>
+
+            <!-- X-axis labels (dates) -->
+            <g class="x-axis">
+              <text *ngFor="let label of xAxisLabels"
+                    [attr.x]="label.x"
+                    [attr.y]="chartHeight - 5"
+                    class="axis-label-x">
+                {{label.value}}
+              </text>
+            </g>
+
             <!-- Revenue Area -->
             <path [attr.d]="revenueAreaPath" class="area-revenue" />
 
@@ -123,6 +143,8 @@ import { AdminService } from '../../../core/services/admin.service';
     .point-revenue:hover { r: 6; }
     .point-orders { fill: #f39c12; stroke: white; stroke-width: 1.5; }
     .point-label { font-size: 10px; fill: #667eea; font-weight: 600; text-anchor: middle; }
+    .axis-label-y { font-size: 11px; fill: #7f8c8d; text-anchor: end; }
+    .axis-label-x { font-size: 10px; fill: #7f8c8d; text-anchor: middle; }
     .chart-legend { display: flex; gap: 1.5rem; margin-top: 1rem; justify-content: center; }
     .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
     .legend-color { width: 20px; height: 3px; display: inline-block; }
@@ -152,6 +174,8 @@ export class AdminStatisticsComponent implements OnInit {
   revenuePoints: any[] = [];
   ordersPoints: any[] = [];
   gridLines: number[] = [];
+  yAxisLabels: any[] = [];
+  xAxisLabels: any[] = [];
 
   constructor(private adminService: AdminService) {}
 
@@ -204,10 +228,28 @@ export class AdminStatisticsComponent implements OnInit {
     const chartInnerWidth = this.chartWidth - 2 * this.chartPadding;
     const chartInnerHeight = this.chartHeight - 2 * this.chartPadding;
 
-    // Generate grid lines
-    this.gridLines = [0, 1, 2, 3, 4].map(i =>
-      this.chartPadding + (chartInnerHeight / 4) * i
-    );
+    // Generate grid lines and Y-axis labels
+    this.gridLines = [];
+    this.yAxisLabels = [];
+    for (let i = 0; i <= 4; i++) {
+      const y = this.chartPadding + (chartInnerHeight / 4) * i;
+      this.gridLines.push(y);
+
+      const value = maxRevenue * (1 - i / 4);
+      this.yAxisLabels.push({ y: y + 5, value: value });
+    }
+
+    // Generate X-axis labels (every few days)
+    this.xAxisLabels = [];
+    const labelInterval = Math.max(1, Math.floor(this.salesByDay.length / 6));
+    this.salesByDay.forEach((sale, index) => {
+      if (index % labelInterval === 0 || index === this.salesByDay.length - 1) {
+        const x = this.chartPadding + (index / (this.salesByDay.length - 1 || 1)) * chartInnerWidth;
+        const date = new Date(sale.date);
+        const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        this.xAxisLabels.push({ x: x, value: dateStr });
+      }
+    });
 
     // Generate points
     this.revenuePoints = [];
