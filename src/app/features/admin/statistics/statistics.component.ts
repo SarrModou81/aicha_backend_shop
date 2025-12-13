@@ -95,11 +95,16 @@ export class AdminStatisticsComponent implements OnInit {
   loadStatistics() {
     this.loading = true;
 
-    this.adminService.getSalesByMonth(this.currentYear).subscribe({
-      next: (data) => {
-        console.log('Sales data received:', data);
-        if (Array.isArray(data) && data.length > 0) {
-          this.salesByMonth = data;
+    this.adminService.getSalesByMonth().subscribe({
+      next: (response) => {
+        console.log('Sales data received:', response);
+        // Handle new response structure: {year: number, data: array}
+        if (response && response.year && response.data) {
+          this.currentYear = response.year;
+          this.salesByMonth = response.data;
+        } else if (Array.isArray(response) && response.length > 0) {
+          // Fallback for old format (just in case)
+          this.salesByMonth = response;
         } else {
           // Générer les 12 mois avec des valeurs à 0 par défaut
           this.salesByMonth = this.generateEmptyMonths();

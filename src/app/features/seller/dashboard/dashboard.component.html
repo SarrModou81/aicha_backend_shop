@@ -138,7 +138,7 @@
 
           <!-- Sales Chart -->
           <div class="sales-chart" *ngIf="salesByMonth.length > 0">
-            <h2>Ventes mensuelles</h2>
+            <h2>Ventes mensuelles ({{currentYear}})</h2>
             <div class="chart-container">
               <div class="chart-bars">
                 <div *ngFor="let sale of salesByMonth" class="chart-bar-wrapper">

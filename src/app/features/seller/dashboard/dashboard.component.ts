@@ -20,6 +20,7 @@ export class SellerDashboardComponent implements OnInit {
   recentOrders: any[] = [];
   topProducts: any[] = [];
   salesByMonth: any[] = [];
+  currentYear = new Date().getFullYear();
   loading = true;
   error: string | null = null;
 
@@ -86,10 +87,15 @@ export class SellerDashboardComponent implements OnInit {
 
   loadSalesChart(): void {
     this.sellerService.getSalesByMonth().subscribe({
-      next: (sales) => {
-        console.log('Seller sales data received:', sales);
-        if (Array.isArray(sales) && sales.length > 0) {
-          this.salesByMonth = sales;
+      next: (response) => {
+        console.log('Seller sales data received:', response);
+        // Handle new response structure: {year: number, data: array}
+        if (response && response.year && response.data) {
+          this.currentYear = response.year;
+          this.salesByMonth = response.data;
+        } else if (Array.isArray(response) && response.length > 0) {
+          // Fallback for old format (just in case)
+          this.salesByMonth = response;
         } else {
           this.salesByMonth = this.generateEmptyMonths();
         }
