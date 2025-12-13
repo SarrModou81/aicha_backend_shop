@@ -64,13 +64,27 @@ export class SellerStatisticsComponent implements OnInit {
 
   loadSalesData(): void {
     this.sellerService.getSalesByMonth().subscribe({
-      next: (sales) => {
-        this.salesByMonth = sales;
-        this.prepareSalesChart(sales);
+      next: (response) => {
+        console.log('Sales data response:', response);
+        // Handle new response structure: {year: number, data: array}
+        if (response && response.year && response.data) {
+          this.selectedYear = response.year;
+          this.salesByMonth = response.data;
+          this.prepareSalesChart(response.data);
+        } else if (Array.isArray(response)) {
+          // Fallback for old format
+          this.salesByMonth = response;
+          this.prepareSalesChart(response);
+        } else {
+          this.salesByMonth = [];
+          this.prepareSalesChart([]);
+        }
         this.loading = false;
       },
       error: (error) => {
         console.error('Erreur lors du chargement des ventes:', error);
+        this.salesByMonth = [];
+        this.prepareSalesChart([]);
         this.loading = false;
       }
     });
