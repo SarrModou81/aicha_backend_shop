@@ -135,27 +135,4 @@
               </div>
             </div>
           </div>
-
-          <!-- Sales Chart -->
-          <div class="sales-chart" *ngIf="salesByMonth.length > 0">
-            <h2>Évolution des ventes (30 derniers jours)</h2>
-            <div class="chart-container">
-              <div class="chart-bars">
-                <div *ngFor="let sale of salesByMonth; let i = index" class="chart-bar-wrapper">
-                  <div class="chart-bar"
-                       [style.height.%]="(sale.total_revenue / getMaxRevenue()) * 100"
-                       [class.empty-bar]="!sale.total_revenue">
-                    <span class="bar-value" *ngIf="sale.total_revenue > 0">
-                      {{ sale.total_revenue | number:'1.0-0' }}
-                    </span>
-                  </div>
-                  <span class="bar-label" *ngIf="i % 5 === 0">{{ formatChartDate(sale.date) }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="sales-chart" *ngIf="salesByMonth.length === 0">
-            <h2>Évolution des ventes (30 derniers jours)</h2>
-            <p style="text-align: center; padding: 2rem; color: #7f8c8d;">Aucune donnée de vente disponible</p>
-  </div>
 </div>

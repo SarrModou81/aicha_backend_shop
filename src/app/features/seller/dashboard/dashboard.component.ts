@@ -53,7 +53,6 @@ export class SellerDashboardComponent implements OnInit {
         this.loading = false;
         this.loadRecentOrders();
         this.loadTopProducts();
-        this.loadSalesChart();
       },
       error: (error) => {
         console.error('Erreur lors du chargement des statistiques:', error);

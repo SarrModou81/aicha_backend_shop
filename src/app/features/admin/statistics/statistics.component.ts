@@ -46,6 +46,15 @@ import { AdminService } from '../../../core/services/admin.service';
                     (mouseenter)="showTooltip(point.data, $event)"
                     (mouseleave)="hideTooltip()" />
 
+            <!-- Revenue labels -->
+            <text *ngFor="let point of revenuePoints; let i = index"
+                  [attr.x]="point.x"
+                  [attr.y]="point.y - 10"
+                  class="point-label"
+                  *ngIf="point.data.total_revenue > 0 && (i === 0 || i === revenuePoints.length - 1 || i % 5 === 0)">
+              {{point.data.total_revenue | number:'1.0-0'}}
+            </text>
+
             <circle *ngFor="let point of ordersPoints"
                     [attr.cx]="point.x"
                     [attr.cy]="point.y"
@@ -112,6 +121,7 @@ import { AdminService } from '../../../core/services/admin.service';
     .point-revenue { fill: #667eea; stroke: white; stroke-width: 2; cursor: pointer; transition: r 0.2s; }
     .point-revenue:hover { r: 6; }
     .point-orders { fill: #f39c12; stroke: white; stroke-width: 1.5; }
+    .point-label { font-size: 10px; fill: #667eea; font-weight: 600; text-anchor: middle; }
     .chart-legend { display: flex; gap: 1.5rem; margin-top: 1rem; justify-content: center; }
     .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
     .legend-color { width: 20px; height: 3px; display: inline-block; }
