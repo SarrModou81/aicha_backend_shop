@@ -189,7 +189,7 @@ export class SellerDashboardComponent implements OnInit {
     return Math.max(...this.salesByMonth.map(s => s.total_revenue || 0));
   }
 
-  formatDate(dateStr: string): string {
+  formatChartDate(dateStr: string): string {
     const date = new Date(dateStr);
     return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
   }

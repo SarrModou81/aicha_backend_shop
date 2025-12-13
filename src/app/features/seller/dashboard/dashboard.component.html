@@ -149,7 +149,7 @@
                       {{ sale.total_revenue | number:'1.0-0' }}
                     </span>
                   </div>
-                  <span class="bar-label" *ngIf="i % 5 === 0">{{ formatDate(sale.date) }}</span>
+                  <span class="bar-label" *ngIf="i % 5 === 0">{{ formatChartDate(sale.date) }}</span>
                 </div>
               </div>
             </div>
