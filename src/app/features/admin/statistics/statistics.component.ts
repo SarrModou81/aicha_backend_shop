@@ -28,13 +28,23 @@ import { AdminService } from '../../../core/services/admin.service';
                     class="grid-line" />
             </g>
 
-            <!-- Y-axis labels (revenue) -->
+            <!-- Y-axis labels (revenue - left) -->
             <g class="y-axis">
               <text *ngFor="let label of yAxisLabels"
                     [attr.x]="chartPadding - 5"
                     [attr.y]="label.y"
-                    class="axis-label-y">
+                    class="axis-label-y revenue-axis">
                 {{label.value | number:'1.0-0'}}
+              </text>
+            </g>
+
+            <!-- Y-axis labels (orders - right) -->
+            <g class="y-axis-right">
+              <text *ngFor="let label of yAxisLabelsOrders"
+                    [attr.x]="chartWidth - chartPadding + 5"
+                    [attr.y]="label.y"
+                    class="axis-label-y orders-axis">
+                {{label.value}}
               </text>
             </g>
 
@@ -143,7 +153,9 @@ import { AdminService } from '../../../core/services/admin.service';
     .point-revenue:hover { r: 6; }
     .point-orders { fill: #f39c12; stroke: white; stroke-width: 1.5; }
     .point-label { font-size: 10px; fill: #667eea; font-weight: 600; text-anchor: middle; }
-    .axis-label-y { font-size: 11px; fill: #7f8c8d; text-anchor: end; }
+    .axis-label-y { font-size: 11px; text-anchor: end; }
+    .axis-label-y.revenue-axis { fill: #667eea; }
+    .axis-label-y.orders-axis { fill: #f39c12; text-anchor: start; }
     .axis-label-x { font-size: 10px; fill: #7f8c8d; text-anchor: middle; }
     .chart-legend { display: flex; gap: 1.5rem; margin-top: 1rem; justify-content: center; }
     .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
@@ -175,6 +187,7 @@ export class AdminStatisticsComponent implements OnInit {
   ordersPoints: any[] = [];
   gridLines: number[] = [];
   yAxisLabels: any[] = [];
+  yAxisLabelsOrders: any[] = [];
   xAxisLabels: any[] = [];
 
   constructor(private adminService: AdminService) {}
@@ -231,12 +244,18 @@ export class AdminStatisticsComponent implements OnInit {
     // Generate grid lines and Y-axis labels
     this.gridLines = [];
     this.yAxisLabels = [];
+    this.yAxisLabelsOrders = [];
     for (let i = 0; i <= 4; i++) {
       const y = this.chartPadding + (chartInnerHeight / 4) * i;
       this.gridLines.push(y);
 
-      const value = maxRevenue * (1 - i / 4);
-      this.yAxisLabels.push({ y: y + 5, value: value });
+      // Revenue axis (left)
+      const revenueValue = maxRevenue * (1 - i / 4);
+      this.yAxisLabels.push({ y: y + 5, value: revenueValue });
+
+      // Orders axis (right)
+      const ordersValue = Math.round(maxOrders * (1 - i / 4));
+      this.yAxisLabelsOrders.push({ y: y + 5, value: ordersValue });
     }
 
     // Generate X-axis labels (every few days)
